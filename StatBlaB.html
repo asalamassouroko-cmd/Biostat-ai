@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioStat AI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── WELCOME SCREEN ── */
+    #welcome {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 0%, #1a0533 0%, #000 60%);
+      z-index: 100;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    #welcome.hide {
+      opacity: 0;
+      transform: scale(1.05);
+      pointer-events: none;
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin-bottom: 32px;
+    }
+
+    .avatar-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #bf5af2, #0a84ff, #30d158, #ff9f0a, #ff375f, #bf5af2);
+      animation: spin 3s linear infinite;
+    }
+
+    .avatar-ring::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: #000;
+    }
+
+    .avatar {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1c1c3a, #2d1b4e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      z-index: 1;
+      box-shadow: 0 0 40px rgba(191, 90, 242, 0.4);
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .pulse-rings {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(191, 90, 242, 0.3);
+      animation: pulse 2s ease-out infinite;
+    }
+
+    .pulse-ring:nth-child(2) { animation-delay: 0.5s; }
+    .pulse-ring:nth-child(3) { animation-delay: 1s; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    .welcome-title {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 0%, #bf5af2 50%, #0a84ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .welcome-subtitle {
+      font-size: 17px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 48px;
+      text-align: center;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, #bf5af2, #0a84ff);
+      border: none;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 16px 48px;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(191, 90, 242, 0.4);
+    }
+
+    .start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(191, 90, 242, 0.6);
+    }
+
+    .floating-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(191, 90, 242, 0.6);
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+    }
+
+    /* ── MAIN APP ── */
+    #app {
+      display: none;
+      min-height: 100vh;
+      background: #000;
+    }
+
+    #app.show { display: flex; flex-direction: column; }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      background: rgba(0,0,0,0.8);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #bf5af2, #0a84ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 12px;
+    }
+
+    .header-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #30d158;
+      margin-left: auto;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #30d158;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Main content */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 24px;
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      transition: border-color 0.3s;
+    }
+
+    .card:hover { border-color: rgba(191, 90, 242, 0.3); }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title span { font-size: 16px; }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      padding: 14px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: rgba(191, 90, 242, 0.6);
+      box-shadow: 0 0 0 3px rgba(191, 90, 242, 0.15);
+    }
+
+    textarea { min-height: 120px; }
+
+    #question-input { min-height: 80px; margin-bottom: 16px; }
+    #csv-input { min-height: 180px; font-family: 'SF Mono', monospace; font-size: 13px; }
+
+    /* Analyze button */
+    .analyze-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #bf5af2, #0a84ff);
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-top: 16px;
+      letter-spacing: 0.3px;
+      transition: opacity 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .analyze-btn:hover { opacity: 0.9; transform: scale(1.02); }
+    .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Result card */
+    .result-card {
+      grid-column: 1 / -1;
+      display: none;
+    }
+
+    .result-card.show { display: block; }
+
+    .result-content {
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.85);
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .latex-section {
+      margin-top: 16px;
+      background: rgba(10, 132, 255, 0.08);
+      border: 1px solid rgba(10, 132, 255, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .latex-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .latex-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0a84ff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .copy-btn {
+      background: rgba(10, 132, 255, 0.2);
+      border: 1px solid rgba(10, 132, 255, 0.4);
+      color: #0a84ff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover { background: rgba(10, 132, 255, 0.3); }
+
+    .latex-code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre;
+    }
+
+    /* Loading */
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      color: rgba(255,255,255,0.6);
+      font-size: 15px;
+    }
+
+    .loading.show { display: flex; }
+
+    .loading-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #bf5af2;
+      animation: loadingBounce 1.2s ease-in-out infinite;
+    }
+
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; background: #0a84ff; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; background: #30d158; }
+
+    @keyframes loadingBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Config section */
+    .config-section {
+      padding: 0 24px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .webhook-input {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .webhook-input input {
+      flex: 1;
+      min-height: unset;
+      padding: 10px 14px;
+    }
+
+    .save-btn {
+      background: rgba(48, 209, 88, 0.2);
+      border: 1px solid rgba(48, 209, 88, 0.4);
+      color: #30d158;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; }
+      .result-card { grid-column: 1; }
+      .welcome-title { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- WELCOME SCREEN -->
+<div id="welcome">
+  <div class="floating-particles" id="particles"></div>
+
+  <div class="avatar-container">
+    <div class="pulse-rings">
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+    </div>
+    <div class="avatar-ring"></div>
+    <div class="avatar">🧬</div>
+  </div>
+
+  <h1 class="welcome-title">BioStat AI</h1>
+  <p class="welcome-subtitle">Analyse biostatistique intelligente propulsée par l'IA. Résultats scientifiques en quelques secondes.</p>
+  <button class="start-btn" onclick="startApp()">Commencer l'analyse →</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- Config webhook -->
+  <div class="config-section" style="padding-top:16px; padding-bottom:0;">
+    <div class="card" style="padding:14px 20px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-size:13px; color:rgba(255,255,255,0.4); white-space:nowrap;">🔗 Webhook n8n :</span>
+        <div class="webhook-input" style="flex:1;">
+          <input type="text" id="webhook-url" placeholder="https://primary-production-xxxx.up.railway.app/webhook/biostat" />
+          <button class="save-btn" onclick="saveWebhook()">Sauvegarder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="header-avatar">🧬</div>
+    <div>
+      <div class="header-title">BioStat AI</div>
+      <div style="font-size:12px; color:rgba(255,255,255,0.4);">Assistant de recherche scientifique</div>
+    </div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      En ligne
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Question card -->
+    <div class="card">
+      <div class="card-title"><span>💬</span> Question de recherche</div>
+      <textarea id="question-input" placeholder="Ex: Y a-t-il une différence significative entre les deux groupes ?"></textarea>
+
+      <div class="card-title" style="margin-top:8px;"><span>📊</span> Données CSV</div>
+      <textarea id="csv-input" placeholder="groupe,valeur&#10;control,10&#10;control,12&#10;traitement,20&#10;traitement,22"></textarea>
+
+      <button class="analyze-btn" onclick="analyze()" id="analyze-btn">
+        <span>🔬</span> Analyser
+      </button>
+    </div>
+
+    <!-- Info card -->
+    <div class="card">
+      <div class="card-title"><span>⚡</span> Capacités</div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(191,90,242,0.08); border-radius:12px; border:1px solid rgba(191,90,242,0.15);">
+          <span style="font-size:22px;">📐</span>
+          <div>
+            <div style="font-size:14px; font-weight:600;">Détection automatique</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.4);">t-test, ANOVA, Chi², Mann-Whitney, Pearson...</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(10,132,255,0.08); border-radius:12px; border:1px solid rgba(10,132,255,0.15);">
+          <span style="font-size:22px;">📚</span>
+          <div>
+            <div style="font-size:14px; font-weight:600;">Recherche PubMed</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.4);">Articles scientifiques pour confirmer vos résultats</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(48,209,88,0.08); border-radius:12px; border:1px solid rgba(48,209,88,0.15);">
+          <span style="font-size:22px;">📄</span>
+          <div>
+            <div style="font-size:14px; font-weight:600;">Rapport LaTeX IMRaD</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.4);">Prêt à compiler sur Overleaf</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,159,10,0.08); border-radius:12px; border:1px solid rgba(255,159,10,0.15);">
+          <span style="font-size:22px;">🧬</span>
+          <div>
+            <div style="font-size:14px; font-weight:600;">Code R généré</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.4);">Scripts reproductibles étape par étape</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="card result-card" id="loading-card" style="display:none;">
+      <div class="loading show">
+        <div class="loading-dots">
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+        </div>
+        <span id="loading-text">Analyse en cours...</span>
+      </div>
+    </div>
+
+    <!-- Result card -->
+    <div class="card result-card" id="result-card">
+      <div class="card-title"><span>✅</span> Résultats de l'analyse</div>
+      <div class="result-content" id="result-text"></div>
+
+      <div class="latex-section" id="latex-section" style="display:none;">
+        <div class="latex-header">
+          <div class="latex-title">📄 Rapport LaTeX</div>
+          <button class="copy-btn" onclick="copyLatex()">Copier le LaTeX</button>
+        </div>
+        <div class="latex-code" id="latex-code"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+    const colors = ['rgba(191,90,242,0.6)', 'rgba(10,132,255,0.6)', 'rgba(48,209,88,0.6)', 'rgba(255,159,10,0.6)'];
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    container.appendChild(p);
+  }
+
+  function startApp() {
+    document.getElementById('welcome').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('welcome').style.display = 'none';
+      document.getElementById('app').classList.add('show');
+    }, 800);
+  }
+
+  function saveWebhook() {
+    const url = document.getElementById('webhook-url').value;
+    localStorage.setItem('webhook_url', url);
+    const btn = document.querySelector('.save-btn');
+    btn.textContent = '✅ Sauvegardé';
+    setTimeout(() => btn.textContent = 'Sauvegarder', 2000);
+  }
+
+  // Load saved webhook
+  window.onload = () => {
+    const saved = localStorage.getItem('webhook_url');
+    if (saved) document.getElementById('webhook-url').value = saved;
+  };
+
+  const loadingMessages = [
+    'Analyse des données CSV...',
+    'Détection du test statistique...',
+    'Exécution du test...',
+    'Recherche sur PubMed...',
+    'Génération du rapport LaTeX...',
+    'Finalisation...'
+  ];
+
+  async function analyze() {
+    const question = document.getElementById('question-input').value.trim();
+    const csvData = document.getElementById('csv-input').value.trim();
+    const webhookUrl = document.getElementById('webhook-url').value.trim();
+
+    if (!question || !csvData) {
+      alert('Merci de remplir la question et les données CSV.');
+      return;
+    }
+    if (!webhookUrl) {
+      alert('Merci de saisir l\\'URL du webhook n8n.');
+      return;
+    }
+
+    const btn = document.getElementById('analyze-btn');
+    btn.disabled = true;
+
+    document.getElementById('result-card').classList.remove('show');
+    document.getElementById('loading-card').style.display = 'block';
+
+    let msgIndex = 0;
+    const loadingInterval = setInterval(() => {
+      document.getElementById('loading-text').textContent = loadingMessages[msgIndex % loadingMessages.length];
+      msgIndex++;
+    }, 3000);
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, csv_data: csvData })
+      });
+
+      const data = await response.json();
+      clearInterval(loadingInterval);
+      document.getElementById('loading-card').style.display = 'none';
+
+      const resultText = data.output || data.text || data.message || JSON.stringify(data, null, 2);
+      document.getElementById('result-text').textContent = resultText;
+
+      // Extrait le LaTeX si présent
+      const latexMatch = resultText.match(/---LATEX---([\s\S]*?)---END LATEX---/);
+      if (latexMatch) {
+        document.getElementById('latex-code').textContent = latexMatch[1].trim();
+        document.getElementById('latex-section').style.display = 'block';
+        document.getElementById('result-text').textContent = resultText.replace(/---LATEX---[\s\S]*?---END LATEX---/, '').trim();
+      }
+
+      document.getElementById('result-card').classList.add('show');
+
+    } catch (err) {
+      clearInterval(loadingInterval);
+      document.getElementById('loading-card').style.display = 'none';
+      document.getElementById('result-text').textContent = 'Erreur de connexion : ' + err.message + '\\n\\nVérifiez que votre URL webhook est correcte et que le workflow est actif.';
+      document.getElementById('result-card').classList.add('show');
+    }
+
+    btn.disabled = false;
+  }
+
+  function copyLatex() {
+    const latex = document.getElementById('latex-code').textContent;
+    navigator.clipboard.writeText(latex);
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Copié !';
+    setTimeout(() => btn.textContent = 'Copier le LaTeX', 2000);
+  }
+</script>
+</body>
+</html>
