@@ -1449,7 +1449,7 @@ function exportResult() {
   const txt = document.getElementById('result-raw').textContent;
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
-  a.download = 'statlab-result-' + Date.now() + '.txt';
+  a.download = 'statlab-result-${Date.now()}.tex';
   a.click();
 }
 
