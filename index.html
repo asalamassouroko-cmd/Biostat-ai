@@ -1383,8 +1383,14 @@ async function analyze() {
     finishPipeline();
     document.getElementById('loading-overlay').classList.remove('show');
 
-    const raw = data.output || data.text || data.message || JSON.stringify(data, null, 2);
-    document.getElementById('result-raw').textContent = raw;
+    let raw = '';
+if (data.output) raw = data.output;
+else if (data.text) raw = data.text;
+else if (data.message) raw = data.message;
+else if (data.response) raw = data.response;
+else if (data.result) raw = data.result;
+else if (data.analysis) raw = JSON.stringify(data.analysis, null, 2);
+else raw = JSON.stringify(data, null, 2);
 
     // Extract LaTeX
     const latexMatch = raw.match(/---LATEX---([\s\S]*?)---END LATEX---/);
