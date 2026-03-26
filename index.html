@@ -9,502 +9,169 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --white:   #ffffff;
-  --gray-50: #f8f9fa;
-  --gray-100:#f1f3f5;
-  --gray-200:#e9ecef;
-  --gray-300:#dee2e6;
-  --gray-400:#ced4da;
-  --gray-500:#adb5bd;
-  --gray-600:#6c757d;
-  --gray-700:#495057;
-  --gray-800:#343a40;
-  --gray-900:#212529;
-  --blue:    #2563eb;
-  --blue-lt: #eff6ff;
-  --blue-md: #bfdbfe;
-  --green:   #16a34a;
-  --green-lt:#f0fdf4;
-  --red:     #dc2626;
-  --red-lt:  #fef2f2;
-  --amber:   #d97706;
-  --amber-lt:#fffbeb;
-  --border:  #e5e7eb;
-  --shadow:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md:0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
-  --radius:  8px;
-  --font:    'IBM Plex Sans', sans-serif;
-  --mono:    'IBM Plex Mono', monospace;
+  --white:#fff;--gray-50:#f8f9fa;--gray-100:#f1f3f5;--gray-200:#e9ecef;
+  --gray-300:#dee2e6;--gray-400:#ced4da;--gray-500:#adb5bd;--gray-600:#6c757d;
+  --gray-700:#495057;--gray-800:#343a40;--gray-900:#212529;
+  --blue:#2563eb;--blue-lt:#eff6ff;--blue-md:#bfdbfe;
+  --green:#16a34a;--green-lt:#f0fdf4;--red:#dc2626;--red-lt:#fef2f2;
+  --amber:#d97706;--amber-lt:#fffbeb;
+  --border:#e5e7eb;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
+  --radius:8px;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
 }
- 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { font-size:14px; }
- 
-body {
-  font-family: var(--font);
-  background: var(--gray-50);
-  color: var(--gray-900);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  line-height: 1.5;
-}
- 
-/* ── LAYOUT ── */
-.app { display: flex; min-height: 100vh; }
- 
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 220px; flex-shrink: 0;
-  background: var(--white);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  position: sticky; top: 0; height: 100vh;
-  overflow-y: auto;
-}
- 
-.sl-brand {
-  padding: 20px 18px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.sl-brand-icon {
-  width: 32px; height: 32px;
-  background: var(--blue); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; color: white; flex-shrink: 0;
-}
-.sl-brand-name {
-  font-size: 15px; font-weight: 600;
-  color: var(--gray-900); letter-spacing: -0.3px;
-}
-.sl-brand-version {
-  font-size: 10px; color: var(--gray-500);
-  font-family: var(--mono); margin-top: 1px;
-}
- 
-.sl-nav { padding: 12px 10px; flex: 1; }
-.sl-nav-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--gray-500);
-  padding: 0 8px; margin: 14px 0 6px;
-}
-.sl-nav-label:first-child { margin-top: 0; }
- 
-.nav-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 8px; border-radius: 6px;
-  cursor: pointer; font-size: 13px; font-weight: 400;
-  color: var(--gray-700); transition: all 0.12s;
-  border: 1px solid transparent; margin-bottom: 2px;
-  text-decoration: none; user-select: none;
-}
-.nav-item:hover { background: var(--gray-50); color: var(--gray-900); }
-.nav-item.active {
-  background: var(--blue-lt); color: var(--blue);
-  border-color: var(--blue-md); font-weight: 500;
-}
-.nav-item .ni-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
-.nav-item .ni-badge {
-  margin-left: auto; font-size: 9px; font-weight: 600;
-  color: var(--gray-400); font-family: var(--mono);
-  text-transform: uppercase; letter-spacing: 1px;
-}
- 
-.sl-bottom {
-  padding: 12px;
-  border-top: 1px solid var(--border);
-}
- 
-.conn-status {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 11px;
-  border-radius: 6px; cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--gray-50);
-  font-size: 12px; color: var(--gray-700);
-  transition: all 0.12s;
-}
-.conn-status:hover { border-color: var(--gray-400); background: var(--white); }
-.conn-status.connected {
-  background: var(--green-lt); border-color: #bbf7d0; color: var(--green);
-}
-.conn-dot {
-  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  background: var(--gray-400);
-}
-.conn-dot.on { background: var(--green); animation: blink 2s ease infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
- 
-/* ── MAIN ── */
-.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
- 
-/* ── TOPBAR ── */
-.topbar {
-  height: 52px; background: var(--white);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 24px; gap: 8px;
-  flex-shrink: 0;
-}
-.topbar-crumb {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 13px; color: var(--gray-500);
-}
-.topbar-crumb .sep { color: var(--gray-300); }
-.topbar-crumb .cur { color: var(--gray-800); font-weight: 500; }
-.topbar-actions { margin-left: auto; display: flex; gap: 6px; }
- 
-.tb-btn {
-  display: flex; align-items: center; gap: 5px;
-  padding: 5px 11px; border-radius: 6px;
-  font-size: 12px; font-weight: 500; color: var(--gray-700);
-  background: var(--white); border: 1px solid var(--border);
-  cursor: pointer; transition: all 0.12s; font-family: var(--font);
-}
-.tb-btn:hover { background: var(--gray-50); border-color: var(--gray-400); }
- 
-/* ── PAGE ── */
-.page { padding: 24px; overflow-y: auto; flex: 1; }
- 
-/* ── METRIC ROW ── */
-.metrics {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-  margin-bottom: 20px;
-}
-.metric {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px;
-  box-shadow: var(--shadow);
-}
-.metric-label {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.8px;
-  text-transform: uppercase; color: var(--gray-500);
-  font-family: var(--mono); margin-bottom: 8px;
-}
-.metric-val { font-size: 22px; font-weight: 600; line-height: 1; font-family: var(--mono); }
-.metric-val.blue  { color: var(--blue); }
-.metric-val.green { color: var(--green); }
-.metric-val.amber { color: var(--amber); }
-.metric-sub { font-size: 11px; color: var(--gray-500); margin-top: 5px; }
- 
-/* ── GRID ── */
-.grid {
-  display: grid; grid-template-columns: 1fr 340px; gap: 16px;
-  align-items: start;
-}
- 
-/* ── CARD ── */
-.card {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--radius); box-shadow: var(--shadow);
-  overflow: hidden;
-}
-.card + .card { margin-top: 12px; }
- 
-.card-head {
-  display: flex; align-items: center; gap: 10px;
-  padding: 13px 18px;
-  border-bottom: 1px solid var(--border);
-}
-.card-title { font-size: 13px; font-weight: 600; color: var(--gray-900); }
-.card-sub { font-size: 11px; color: var(--gray-500); margin-left: auto; font-family: var(--mono); }
-.ch-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-.ch-dot.blue  { background: var(--blue); }
-.ch-dot.green { background: var(--green); }
-.ch-dot.amber { background: var(--amber); }
- 
-.card-body { padding: 18px; }
- 
-/* ── FORM ── */
-.field { margin-bottom: 14px; }
-.field:last-child { margin-bottom: 0; }
-.field-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
-  text-transform: uppercase; color: var(--gray-600);
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 6px;
-}
-.field-label .badge {
-  font-size: 9px; padding: 1px 6px; border-radius: 3px;
-  background: var(--blue-lt); color: var(--blue);
-  border: 1px solid var(--blue-md); font-family: var(--mono);
-  text-transform: uppercase; letter-spacing: 1px;
-}
- 
-textarea, input[type="text"] {
-  width: 100%; background: var(--gray-50);
-  border: 1px solid var(--border); border-radius: 6px;
-  color: var(--gray-900); font-family: var(--font);
-  font-size: 13px; padding: 9px 11px;
-  resize: vertical; outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  line-height: 1.55;
-}
-textarea:focus, input[type="text"]:focus {
-  border-color: var(--blue); background: var(--white);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-textarea::placeholder, input::placeholder { color: var(--gray-400); }
-#q-input { min-height: 68px; }
-#csv-input { min-height: 130px; font-family: var(--mono); font-size: 12px; line-height: 1.6; }
- 
-/* ── FILE DROP ── */
-.file-drop {
-  border: 1.5px dashed var(--gray-300); border-radius: 6px;
-  padding: 16px; text-align: center; cursor: pointer;
-  transition: all 0.15s; background: var(--gray-50);
-}
-.file-drop:hover, .file-drop.drag { border-color: var(--blue); background: var(--blue-lt); }
-.file-drop input { display: none; }
-.file-drop-icon { font-size: 18px; margin-bottom: 6px; }
-.file-drop-text { font-size: 12px; color: var(--gray-600); }
-.file-drop-text span { color: var(--blue); text-decoration: underline; cursor: pointer; }
-.file-drop-name {
-  font-size: 12px; color: var(--green); font-family: var(--mono);
-  margin-top: 4px; font-weight: 500;
-}
- 
-.input-toggle {
-  display: flex; gap: 4px; margin-bottom: 10px;
-}
-.itog-btn {
-  flex: 1; padding: 6px 10px; border-radius: 5px;
-  font-size: 11px; font-weight: 600; text-align: center;
-  cursor: pointer; border: 1px solid var(--border);
-  background: var(--gray-50); color: var(--gray-600);
-  transition: all 0.12s; font-family: var(--font);
-  text-transform: uppercase; letter-spacing: 0.8px;
-}
-.itog-btn.active {
-  background: var(--white); border-color: var(--blue);
-  color: var(--blue); box-shadow: var(--shadow);
-}
- 
-/* ── BUTTONS ── */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  font-family: var(--font); font-size: 13px; font-weight: 500;
-  padding: 9px 16px; border-radius: 6px;
-  border: none; cursor: pointer; transition: all 0.15s;
-  white-space: nowrap;
-}
-.btn-primary {
-  background: var(--blue); color: white;
-  box-shadow: 0 1px 3px rgba(37,99,235,0.3);
-}
-.btn-primary:hover { background: #1d4ed8; box-shadow: 0 2px 6px rgba(37,99,235,0.4); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-ghost {
-  background: var(--white); color: var(--gray-700);
-  border: 1px solid var(--border);
-}
-.btn-ghost:hover { background: var(--gray-50); border-color: var(--gray-400); }
-.btn-sm { padding: 5px 10px; font-size: 12px; }
-.btn-full { width: 100%; padding: 10px; margin-top: 12px; }
- 
-/* ── PROGRESS ── */
-.progress-bar {
-  height: 3px; background: var(--gray-200);
-  border-radius: 2px; overflow: hidden; margin: 10px 0 14px;
-}
-.progress-fill {
-  height: 100%; background: var(--blue);
-  border-radius: 2px; width: 0%;
-  transition: width 0.4s ease;
-}
- 
-/* ── STEPS ── */
-.steps { display: flex; flex-direction: column; }
-.step {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
-}
-.step:last-child { border-bottom: none; padding-bottom: 0; }
- 
-.step-num {
-  width: 22px; height: 22px; border-radius: 5px;
-  background: var(--gray-100); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 600; color: var(--gray-500);
-  font-family: var(--mono); flex-shrink: 0; margin-top: 1px;
-  transition: all 0.25s;
-}
-.step.done .step-num {
-  background: var(--green-lt); border-color: #bbf7d0; color: var(--green);
-}
-.step.active .step-num {
-  background: var(--blue-lt); border-color: var(--blue-md); color: var(--blue);
-  animation: stepPulse 1.2s ease infinite;
-}
-@keyframes stepPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.15); }
-  50%     { box-shadow: 0 0 0 4px rgba(37,99,235,0.15); }
-}
- 
-.step-body { flex: 1; min-width: 0; }
-.step-title { font-size: 12px; font-weight: 500; color: var(--gray-900); }
-.step.pending .step-title { color: var(--gray-400); }
-.step-desc { font-size: 11px; color: var(--gray-500); margin-top: 1px; }
-.step-time { font-size: 10px; color: var(--gray-400); font-family: var(--mono); flex-shrink: 0; }
- 
-/* ── RESULTS ── */
-.result-section { display: none; margin-top: 14px; }
-.result-section.show { display: block; }
- 
-.tabs { display: flex; gap: 2px; padding: 3px; background: var(--gray-100); border-radius: 7px; margin-bottom: 12px; }
-.tab {
-  flex: 1; padding: 6px 8px; border-radius: 5px;
-  font-size: 12px; font-weight: 500; text-align: center;
-  cursor: pointer; color: var(--gray-600); border: none;
-  background: none; transition: all 0.12s; font-family: var(--font);
-}
-.tab.active { background: var(--white); color: var(--gray-900); box-shadow: var(--shadow); }
-.tab-pane { display: none; }
-.tab-pane.show { display: block; }
- 
-.result-box {
-  background: var(--gray-50); border: 1px solid var(--border);
-  border-radius: 6px; padding: 14px;
-  font-size: 13px; line-height: 1.7; color: var(--gray-800);
-  max-height: 340px; overflow-y: auto;
-  white-space: pre-wrap; font-family: var(--font);
-}
- 
-.latex-box {
-  border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
-}
-.latex-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 12px; background: var(--gray-50);
-  border-bottom: 1px solid var(--border);
-}
-.latex-label { font-size: 10px; font-weight: 600; color: var(--gray-600); font-family: var(--mono); text-transform: uppercase; letter-spacing: 1.5px; }
-.latex-body {
-  padding: 12px; font-family: var(--mono); font-size: 11px;
-  color: var(--gray-700); max-height: 280px; overflow-y: auto;
-  white-space: pre; line-height: 1.65; background: #fafafa;
-}
- 
-/* ── HISTORY ── */
-.hist-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px; border-radius: 6px;
-  cursor: pointer; transition: background 0.12s;
-  border: 1px solid transparent; margin-bottom: 3px;
-}
-.hist-item:hover { background: var(--gray-50); border-color: var(--border); }
-.hi-icon {
-  width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
-  background: var(--gray-100); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; font-size: 13px;
-}
-.hi-body { flex: 1; min-width: 0; }
-.hi-title { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hi-meta { font-size: 11px; color: var(--gray-500); font-family: var(--mono); }
-.hi-tag {
-  font-size: 10px; font-family: var(--mono); font-weight: 600;
-  padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
-}
-.hi-tag.sig { background: var(--green-lt); color: var(--green); border: 1px solid #bbf7d0; }
-.hi-tag.ns  { background: var(--red-lt);   color: var(--red);   border: 1px solid #fecaca; }
- 
-.empty { text-align: center; padding: 24px 0; color: var(--gray-400); font-size: 12px; font-family: var(--mono); }
- 
-/* ── MODAL ── */
-.modal-ov {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 200; align-items: center; justify-content: center;
-  backdrop-filter: blur(3px);
-}
-.modal-ov.show { display: flex; }
-.modal {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: 12px; width: 440px; padding: 24px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  animation: modalIn 0.2s ease;
-}
-@keyframes modalIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.modal-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-.modal-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 18px; line-height: 1.5; }
-.modal-note {
-  background: var(--blue-lt); border: 1px solid var(--blue-md);
-  border-radius: 6px; padding: 11px 13px;
-  font-size: 12px; color: var(--gray-700); line-height: 1.6; margin-top: 14px;
-}
-.modal-note code { color: var(--blue); font-family: var(--mono); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
- 
-/* ── LOADING ── */
-.loading-ov {
-  display: none; position: fixed; inset: 0;
-  background: rgba(255,255,255,0.85);
-  z-index: 500; align-items: center; justify-content: center;
-  flex-direction: column; gap: 16px;
-  backdrop-filter: blur(4px);
-}
-.loading-ov.show { display: flex; }
-.spinner {
-  width: 40px; height: 40px; border-radius: 50%;
-  border: 2.5px solid var(--gray-200); border-top-color: var(--blue);
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to{transform:rotate(360deg)} }
-.loading-msg { font-size: 13px; color: var(--gray-700); font-weight: 500; }
-.loading-sub { font-size: 12px; color: var(--gray-500); }
- 
-/* ── TOAST ── */
-.toast {
-  position: fixed; bottom: 20px; right: 20px; z-index: 999;
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px; background: var(--gray-900);
-  border-radius: 8px; font-size: 13px; color: white;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  transform: translateY(60px); opacity: 0;
-  transition: all 0.25s ease; pointer-events: none; max-width: 300px;
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.ok  { background: var(--green); }
-.toast.err { background: var(--red); }
- 
-/* ── RESULT STATUS ── */
-.r-status {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 13px; border-radius: 6px;
-  font-size: 12px; font-weight: 500; margin-bottom: 12px;
-}
-.r-status.sig { background: var(--green-lt); color: var(--green); border: 1px solid #bbf7d0; }
-.r-status.ns  { background: var(--red-lt);   color: var(--red);   border: 1px solid #fecaca; }
-.r-status.na  { background: var(--gray-50);  color: var(--gray-600); border: 1px solid var(--border); }
- 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
- 
-@media(max-width:960px) {
-  .grid { grid-template-columns: 1fr; }
-  .metrics { grid-template-columns: 1fr 1fr; }
-}
-@media(max-width:700px) {
-  .sidebar { display: none; }
-  .page { padding: 14px; }
-  .metrics { grid-template-columns: 1fr 1fr; }
-}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-900);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sl-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sl-brand-icon{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+.sl-brand-name{font-size:15px;font-weight:600;color:var(--gray-900);letter-spacing:-.3px}
+.sl-brand-version{font-size:10px;color:var(--gray-500);font-family:var(--mono);margin-top:1px}
+.sl-nav{padding:12px 10px;flex:1}
+.sl-nav-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-500);padding:0 8px;margin:14px 0 6px}
+.sl-nav-label:first-child{margin-top:0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:400;color:var(--gray-700);transition:all .12s;border:1px solid transparent;margin-bottom:2px;text-decoration:none;user-select:none}
+.nav-item:hover{background:var(--gray-50);color:var(--gray-900)}
+.nav-item.active{background:var(--blue-lt);color:var(--blue);border-color:var(--blue-md);font-weight:500}
+.nav-item .ni-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nav-item .ni-badge{margin-left:auto;font-size:9px;font-weight:600;color:var(--gray-400);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+.sl-bottom{padding:12px;border-top:1px solid var(--border)}
+.conn-status{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:var(--gray-50);font-size:12px;color:var(--gray-700);transition:all .12s}
+.conn-status:hover{border-color:var(--gray-400);background:var(--white)}
+.conn-status.connected{background:var(--green-lt);border-color:#bbf7d0;color:var(--green)}
+.conn-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--gray-400)}
+.conn-dot.on{background:var(--green);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:8px;flex-shrink:0}
+.topbar-crumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-500)}
+.topbar-crumb .sep{color:var(--gray-300)}
+.topbar-crumb .cur{color:var(--gray-800);font-weight:500}
+.topbar-actions{margin-left:auto;display:flex;gap:6px}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;color:var(--gray-700);background:var(--white);border:1px solid var(--border);cursor:pointer;transition:all .12s;font-family:var(--font)}
+.tb-btn:hover{background:var(--gray-50);border-color:var(--gray-400)}
+.page{padding:24px;overflow-y:auto;flex:1}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.metric-label{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--gray-500);font-family:var(--mono);margin-bottom:8px}
+.metric-val{font-size:22px;font-weight:600;line-height:1;font-family:var(--mono)}
+.metric-val.blue{color:var(--blue)}
+.metric-val.green{color:var(--green)}
+.metric-val.amber{color:var(--amber)}
+.metric-sub{font-size:11px;color:var(--gray-500);margin-top:5px}
+.grid{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card+.card{margin-top:12px}
+.card-head{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:600;color:var(--gray-900)}
+.card-sub{font-size:11px;color:var(--gray-500);margin-left:auto;font-family:var(--mono)}
+.ch-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ch-dot.blue{background:var(--blue)}
+.ch-dot.green{background:var(--green)}
+.ch-dot.amber{background:var(--amber)}
+.card-body{padding:18px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--gray-600);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.field-label .badge{font-size:9px;padding:1px 6px;border-radius:3px;background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-md);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+textarea,input[type="text"]{width:100%;background:var(--gray-50);border:1px solid var(--border);border-radius:6px;color:var(--gray-900);font-family:var(--font);font-size:13px;padding:9px 11px;resize:vertical;outline:none;transition:border-color .15s,box-shadow .15s;line-height:1.55}
+textarea:focus,input[type="text"]:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+textarea::placeholder,input::placeholder{color:var(--gray-400)}
+#q-input{min-height:68px}
+#csv-input{min-height:130px;font-family:var(--mono);font-size:12px;line-height:1.6}
+.file-drop{border:1.5px dashed var(--gray-300);border-radius:6px;padding:16px;text-align:center;cursor:pointer;transition:all .15s;background:var(--gray-50)}
+.file-drop:hover,.file-drop.drag{border-color:var(--blue);background:var(--blue-lt)}
+.file-drop input{display:none}
+.file-drop-icon{font-size:18px;margin-bottom:6px}
+.file-drop-text{font-size:12px;color:var(--gray-600)}
+.file-drop-text span{color:var(--blue);text-decoration:underline;cursor:pointer}
+.file-drop-name{font-size:12px;color:var(--green);font-family:var(--mono);margin-top:4px;font-weight:500}
+.input-toggle{display:flex;gap:4px;margin-bottom:10px}
+.itog-btn{flex:1;padding:6px 10px;border-radius:5px;font-size:11px;font-weight:600;text-align:center;cursor:pointer;border:1px solid var(--border);background:var(--gray-50);color:var(--gray-600);transition:all .12s;font-family:var(--font);text-transform:uppercase;letter-spacing:.8px}
+.itog-btn.active{background:var(--white);border-color:var(--blue);color:var(--blue);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-size:13px;font-weight:500;padding:9px 16px;border-radius:6px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(37,99,235,.3)}
+.btn-primary:hover{background:#1d4ed8;box-shadow:0 2px 6px rgba(37,99,235,.4)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:var(--white);color:var(--gray-700);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--gray-50);border-color:var(--gray-400)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-full{width:100%;padding:10px;margin-top:12px}
+.progress-bar{height:3px;background:var(--gray-200);border-radius:2px;overflow:hidden;margin:10px 0 14px}
+.progress-fill{height:100%;background:var(--blue);border-radius:2px;width:0%;transition:width .4s ease}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none;padding-bottom:0}
+.step-num{width:22px;height:22px;border-radius:5px;background:var(--gray-100);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--gray-500);font-family:var(--mono);flex-shrink:0;margin-top:1px;transition:all .25s}
+.step.done .step-num{background:var(--green-lt);border-color:#bbf7d0;color:var(--green)}
+.step.active .step-num{background:var(--blue-lt);border-color:var(--blue-md);color:var(--blue);animation:stepPulse 1.2s ease infinite}
+@keyframes stepPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.15)}50%{box-shadow:0 0 0 4px rgba(37,99,235,.15)}}
+.step-body{flex:1;min-width:0}
+.step-title{font-size:12px;font-weight:500;color:var(--gray-900)}
+.step.pending .step-title{color:var(--gray-400)}
+.step-desc{font-size:11px;color:var(--gray-500);margin-top:1px}
+.step-time{font-size:10px;color:var(--gray-400);font-family:var(--mono);flex-shrink:0}
+.result-section{display:none;margin-top:14px}
+.result-section.show{display:block}
+.tabs{display:flex;gap:2px;padding:3px;background:var(--gray-100);border-radius:7px;margin-bottom:12px}
+.tab{flex:1;padding:6px 8px;border-radius:5px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--gray-600);border:none;background:none;transition:all .12s;font-family:var(--font)}
+.tab.active{background:var(--white);color:var(--gray-900);box-shadow:var(--shadow)}
+.tab-pane{display:none}
+.tab-pane.show{display:block}
+.result-box{background:var(--gray-50);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:13px;line-height:1.7;color:var(--gray-800);max-height:340px;overflow-y:auto;white-space:pre-wrap;font-family:var(--font)}
+.latex-box{border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.latex-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--gray-50);border-bottom:1px solid var(--border)}
+.latex-label{font-size:10px;font-weight:600;color:var(--gray-600);font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px}
+.latex-body{padding:12px;font-family:var(--mono);font-size:11px;color:var(--gray-700);max-height:280px;overflow-y:auto;white-space:pre;line-height:1.65;background:#fafafa}
+.hist-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .12s;border:1px solid transparent;margin-bottom:3px}
+.hist-item:hover{background:var(--gray-50);border-color:var(--border)}
+.hi-icon{width:30px;height:30px;border-radius:7px;flex-shrink:0;background:var(--gray-100);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px}
+.hi-body{flex:1;min-width:0}
+.hi-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-meta{font-size:11px;color:var(--gray-500);font-family:var(--mono)}
+.hi-tag{font-size:10px;font-family:var(--mono);font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0}
+.hi-tag.sig{background:var(--green-lt);color:var(--green);border:1px solid #bbf7d0}
+.hi-tag.ns{background:var(--red-lt);color:var(--red);border:1px solid #fecaca}
+.empty{text-align:center;padding:24px 0;color:var(--gray-400);font-size:12px;font-family:var(--mono)}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-ov.show{display:flex}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:12px;width:440px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--gray-600);margin-bottom:18px;line-height:1.5}
+.modal-note{background:var(--blue-lt);border:1px solid var(--blue-md);border-radius:6px;padding:11px 13px;font-size:12px;color:var(--gray-700);line-height:1.6;margin-top:14px}
+.modal-note code{color:var(--blue);font-family:var(--mono)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.loading-ov{display:none;position:fixed;inset:0;background:rgba(255,255,255,.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(4px)}
+.loading-ov.show{display:flex}
+.spinner{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--gray-200);border-top-color:var(--blue);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:13px;color:var(--gray-700);font-weight:500}
+.loading-sub{font-size:12px;color:var(--gray-500)}
+.toast{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--gray-900);border-radius:8px;font-size:13px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.15);transform:translateY(60px);opacity:0;transition:all .25s ease;pointer-events:none;max-width:300px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:var(--green)}
+.toast.err{background:var(--red)}
+.r-status{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:6px;font-size:12px;font-weight:500;margin-bottom:12px}
+.r-status.sig{background:var(--green-lt);color:var(--green);border:1px solid #bbf7d0}
+.r-status.ns{background:var(--red-lt);color:var(--red);border:1px solid #fecaca}
+.r-status.na{background:var(--gray-50);color:var(--gray-600);border:1px solid var(--border)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px}
+@media(max-width:960px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.sidebar{display:none}.page{padding:14px}.metrics{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
  
-<!-- LOADING -->
 <div class="loading-ov" id="loading-ov">
   <div class="spinner"></div>
   <div class="loading-msg" id="loading-msg">Analyse en cours…</div>
   <div class="loading-sub" id="loading-sub">Connexion au pipeline n8n</div>
 </div>
  
-<!-- MODAL WEBHOOK -->
 <div class="modal-ov" id="modal">
   <div class="modal">
     <div class="modal-title">🔗 Configurer le webhook n8n</div>
@@ -523,50 +190,27 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
   </div>
 </div>
  
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
  
-<!-- APP -->
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sl-brand">
       <div class="sl-brand-icon">🔬</div>
       <div>
         <div class="sl-brand-name">StatLab</div>
-        <div class="sl-brand-version">v2.0 · IMRaD</div>
+        <div class="sl-brand-version">v2.1 · IMRaD</div>
       </div>
     </div>
- 
     <nav class="sl-nav">
       <div class="sl-nav-label">Workspace</div>
-      <div class="nav-item active" onclick="navTo('analyze',this)">
-        <span class="ni-icon">⚡</span> Analyse
-      </div>
-      <div class="nav-item" onclick="navTo('history',this)">
-        <span class="ni-icon">🕐</span> Historique
-        <span class="ni-badge">soon</span>
-      </div>
-      <div class="nav-item" onclick="navTo('reports',this)">
-        <span class="ni-icon">📄</span> Rapports
-        <span class="ni-badge">soon</span>
-      </div>
- 
+      <div class="nav-item active" onclick="navTo('analyze',this)"><span class="ni-icon">⚡</span> Analyse</div>
+      <div class="nav-item" onclick="navTo('history',this)"><span class="ni-icon">🕐</span> Historique<span class="ni-badge">soon</span></div>
+      <div class="nav-item" onclick="navTo('reports',this)"><span class="ni-icon">📄</span> Rapports<span class="ni-badge">soon</span></div>
       <div class="sl-nav-label">Outils</div>
-      <div class="nav-item" onclick="navTo('pubmed',this)">
-        <span class="ni-icon">🔎</span> PubMed
-        <span class="ni-badge">soon</span>
-      </div>
-      <div class="nav-item" onclick="navTo('rcode',this)">
-        <span class="ni-icon">📊</span> R Code
-        <span class="ni-badge">soon</span>
-      </div>
-      <div class="nav-item" onclick="navTo('latex',this)">
-        <span class="ni-icon">📝</span> LaTeX
-        <span class="ni-badge">soon</span>
-      </div>
+      <div class="nav-item" onclick="navTo('pubmed',this)"><span class="ni-icon">🔎</span> PubMed<span class="ni-badge">soon</span></div>
+      <div class="nav-item" onclick="navTo('rcode',this)"><span class="ni-icon">📊</span> R Code<span class="ni-badge">soon</span></div>
+      <div class="nav-item" onclick="navTo('latex',this)"><span class="ni-icon">📝</span> LaTeX<span class="ni-badge">soon</span></div>
     </nav>
- 
     <div class="sl-bottom">
       <div class="conn-status" id="conn-status" onclick="openModal()">
         <div class="conn-dot" id="conn-dot"></div>
@@ -575,14 +219,10 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
     </div>
   </aside>
  
-  <!-- MAIN -->
   <div class="main">
-    <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-crumb">
-        <span>StatLab</span>
-        <span class="sep">›</span>
-        <span class="cur">Analyse biostatistique</span>
+        <span>StatLab</span><span class="sep">›</span><span class="cur">Analyse biostatistique</span>
       </div>
       <div class="topbar-actions">
         <button class="tb-btn" onclick="openModal()">
@@ -596,69 +236,34 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
       </div>
     </div>
  
-    <!-- PAGE -->
     <div class="page">
- 
-      <!-- METRICS -->
       <div class="metrics">
-        <div class="metric">
-          <div class="metric-label">Analyses</div>
-          <div class="metric-val blue" id="m-runs">0</div>
-          <div class="metric-sub">Cette session</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">p-value</div>
-          <div class="metric-val" id="m-pval" style="color:var(--gray-400)">—</div>
-          <div class="metric-sub">Dernier test</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Statut</div>
-          <div class="metric-val green" id="m-status">Prêt</div>
-          <div class="metric-sub">Système OK</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Webhook</div>
-          <div class="metric-val" id="m-wh" style="color:var(--gray-400); font-size:14px;">—</div>
-          <div class="metric-sub" id="m-wh-sub">Non configuré</div>
-        </div>
+        <div class="metric"><div class="metric-label">Analyses</div><div class="metric-val blue" id="m-runs">0</div><div class="metric-sub">Cette session</div></div>
+        <div class="metric"><div class="metric-label">p-value</div><div class="metric-val" id="m-pval" style="color:var(--gray-400)">—</div><div class="metric-sub">Dernier test</div></div>
+        <div class="metric"><div class="metric-label">Statut</div><div class="metric-val green" id="m-status">Prêt</div><div class="metric-sub">Système OK</div></div>
+        <div class="metric"><div class="metric-label">Webhook</div><div class="metric-val" id="m-wh" style="color:var(--gray-400);font-size:14px">—</div><div class="metric-sub" id="m-wh-sub">Non configuré</div></div>
       </div>
  
-      <!-- GRID -->
       <div class="grid">
- 
-        <!-- LEFT -->
         <div>
           <div class="card">
-            <div class="card-head">
-              <div class="ch-dot blue"></div>
-              <div class="card-title">Requête de recherche</div>
-              <div class="card-sub">Input · Dataset</div>
-            </div>
+            <div class="card-head"><div class="ch-dot blue"></div><div class="card-title">Requête de recherche</div><div class="card-sub">Input · Dataset</div></div>
             <div class="card-body">
- 
-              <!-- Question -->
               <div class="field">
                 <div class="field-label">Question de recherche</div>
                 <textarea id="q-input" placeholder="Ex : Y a-t-il une différence significative de glycémie entre le groupe contrôle et le groupe traitement ?"></textarea>
               </div>
- 
-              <!-- Data toggle -->
               <div class="field">
                 <div class="field-label">Données <span class="badge">CSV / Fichier</span></div>
                 <div class="input-toggle">
-                  <button class="itog-btn active" onclick="switchInput('text',this)" id="itog-text">Texte CSV</button>
-                  <button class="itog-btn" onclick="switchInput('file',this)" id="itog-file">Fichier CSV</button>
+                  <button class="itog-btn active" onclick="switchInput('text',this)">Texte CSV</button>
+                  <button class="itog-btn" onclick="switchInput('file',this)">Fichier CSV</button>
                 </div>
- 
-                <!-- Text input -->
                 <div id="csv-text-wrap">
                   <textarea id="csv-input" placeholder="groupe,valeur&#10;control,5.2&#10;control,5.0&#10;traitement,4.1&#10;traitement,3.9"></textarea>
                 </div>
- 
-                <!-- File input -->
-                <div id="csv-file-wrap" style="display:none;">
-                  <div class="file-drop" id="file-drop" onclick="document.getElementById('csv-file').click()"
-                       ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+                <div id="csv-file-wrap" style="display:none">
+                  <div class="file-drop" id="file-drop" onclick="document.getElementById('csv-file').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
                     <input type="file" id="csv-file" accept=".csv,.tsv,.txt" onchange="handleFile(this.files[0])">
                     <div class="file-drop-icon">📂</div>
                     <div class="file-drop-text">Glissez un fichier CSV ici ou <span>parcourez</span></div>
@@ -666,7 +271,6 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
                   </div>
                 </div>
               </div>
- 
               <button class="btn btn-primary btn-full" id="run-btn" onclick="runAnalysis()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 Lancer l'analyse
@@ -674,13 +278,11 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
             </div>
           </div>
  
-          <!-- RESULTS -->
           <div class="result-section" id="result-section">
             <div class="card">
               <div class="card-head">
-                <div class="ch-dot green"></div>
-                <div class="card-title">Résultats</div>
-                <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="exportResult()">
+                <div class="ch-dot green"></div><div class="card-title">Résultats</div>
+                <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="exportResult()">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                   Exporter
                 </button>
@@ -692,9 +294,7 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
                   <button class="tab" onclick="switchTab('latex',this)">LaTeX</button>
                   <button class="tab" onclick="switchTab('raw',this)">Brut</button>
                 </div>
-                <div class="tab-pane show" id="tab-summary">
-                  <div class="result-box" id="r-summary"></div>
-                </div>
+                <div class="tab-pane show" id="tab-summary"><div class="result-box" id="r-summary"></div></div>
                 <div class="tab-pane" id="tab-latex">
                   <div class="latex-box">
                     <div class="latex-head">
@@ -707,98 +307,45 @@ textarea::placeholder, input::placeholder { color: var(--gray-400); }
                     <div class="latex-body" id="r-latex">Aucun bloc LaTeX détecté.</div>
                   </div>
                 </div>
-                <div class="tab-pane" id="tab-raw">
-                  <div class="result-box" id="r-raw"></div>
-                </div>
+                <div class="tab-pane" id="tab-raw"><div class="result-box" id="r-raw"></div></div>
               </div>
             </div>
           </div>
         </div>
  
-        <!-- RIGHT -->
         <div>
-          <!-- PIPELINE -->
           <div class="card">
-            <div class="card-head">
-              <div class="ch-dot amber"></div>
-              <div class="card-title">Pipeline</div>
-              <div class="card-sub" id="pipe-pct">0 / 5</div>
-            </div>
+            <div class="card-head"><div class="ch-dot amber"></div><div class="card-title">Pipeline</div><div class="card-sub" id="pipe-pct">0 / 5</div></div>
             <div class="card-body">
               <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
               <div class="steps">
-                <div class="step pending" id="s1">
-                  <div class="step-num">01</div>
-                  <div class="step-body">
-                    <div class="step-title">Parsing CSV</div>
-                    <div class="step-desc">Validation &amp; normalité</div>
-                  </div>
-                  <div class="step-time" id="t1">—</div>
-                </div>
-                <div class="step pending" id="s2">
-                  <div class="step-num">02</div>
-                  <div class="step-body">
-                    <div class="step-title">Sélection du test</div>
-                    <div class="step-desc">t-test / ANOVA / Mann-Whitney</div>
-                  </div>
-                  <div class="step-time" id="t2">—</div>
-                </div>
-                <div class="step pending" id="s3">
-                  <div class="step-num">03</div>
-                  <div class="step-body">
-                    <div class="step-title">Test statistique</div>
-                    <div class="step-desc">p-value, IC95%, effect size</div>
-                  </div>
-                  <div class="step-time" id="t3">—</div>
-                </div>
-                <div class="step pending" id="s4">
-                  <div class="step-num">04</div>
-                  <div class="step-body">
-                    <div class="step-title">Recherche littérature</div>
-                    <div class="step-desc">PubMed · Nature · NEJM</div>
-                  </div>
-                  <div class="step-time" id="t4">—</div>
-                </div>
-                <div class="step pending" id="s5">
-                  <div class="step-num">05</div>
-                  <div class="step-body">
-                    <div class="step-title">Rapport LaTeX</div>
-                    <div class="step-desc">Format IMRaD complet</div>
-                  </div>
-                  <div class="step-time" id="t5">—</div>
-                </div>
+                <div class="step pending" id="s1"><div class="step-num">01</div><div class="step-body"><div class="step-title">Parsing CSV</div><div class="step-desc">Validation &amp; normalité</div></div><div class="step-time" id="t1">—</div></div>
+                <div class="step pending" id="s2"><div class="step-num">02</div><div class="step-body"><div class="step-title">Sélection du test</div><div class="step-desc">t-test / ANOVA / Mann-Whitney</div></div><div class="step-time" id="t2">—</div></div>
+                <div class="step pending" id="s3"><div class="step-num">03</div><div class="step-body"><div class="step-title">Test statistique</div><div class="step-desc">p-value, IC95%, effect size</div></div><div class="step-time" id="t3">—</div></div>
+                <div class="step pending" id="s4"><div class="step-num">04</div><div class="step-body"><div class="step-title">Recherche littérature</div><div class="step-desc">PubMed · Nature · NEJM</div></div><div class="step-time" id="t4">—</div></div>
+                <div class="step pending" id="s5"><div class="step-num">05</div><div class="step-body"><div class="step-title">Rapport LaTeX</div><div class="step-desc">Format IMRaD complet</div></div><div class="step-time" id="t5">—</div></div>
               </div>
             </div>
           </div>
  
-          <!-- HISTORY -->
-          <div class="card" style="margin-top:12px;">
-            <div class="card-head">
-              <div class="ch-dot blue"></div>
-              <div class="card-title">Historique</div>
-              <div class="card-sub" id="hist-count">0 analyses</div>
-            </div>
-            <div class="card-body" id="hist-body">
-              <div class="empty">Aucune analyse pour l'instant</div>
-            </div>
+          <div class="card" style="margin-top:12px">
+            <div class="card-head"><div class="ch-dot blue"></div><div class="card-title">Historique</div><div class="card-sub" id="hist-count">0 analyses</div></div>
+            <div class="card-body" id="hist-body"><div class="empty">Aucune analyse pour l'instant</div></div>
           </div>
         </div>
- 
       </div>
-    </div><!-- /page -->
-  </div><!-- /main -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
  
 <script>
-/* ══════════════════════════════════════════
-   STATE
-══════════════════════════════════════════ */
-let webhookUrl = localStorage.getItem('sl_wh') || '';
-let runCount   = parseInt(localStorage.getItem('sl_runs') || '0');
-let history    = JSON.parse(localStorage.getItem('sl_history') || '[]');
-let rawResult  = '';
-let stepTimers = [];
-let inputMode  = 'text'; // 'text' | 'file'
+/* ── STATE ── */
+let webhookUrl  = localStorage.getItem('sl_wh') || '';
+let runCount    = parseInt(localStorage.getItem('sl_runs') || '0');
+let history     = JSON.parse(localStorage.getItem('sl_history') || '[]');
+let rawResult   = '';
+let stepTimers  = [];
+let inputMode   = 'text';
 let csvFromFile = '';
  
 const STEPS   = ['s1','s2','s3','s4','s5'];
@@ -811,20 +358,14 @@ const MSGS    = [
   'Génération rapport LaTeX IMRaD…'
 ];
  
-/* ── INIT ── */
 window.addEventListener('load', () => {
   if (webhookUrl) syncConn(true);
   syncStats();
   renderHistory();
 });
  
-/* ══════════════════════════════════════════
-   CONNECTION
-══════════════════════════════════════════ */
-function openModal()  {
-  document.getElementById('modal').classList.add('show');
-  document.getElementById('wh-input').value = webhookUrl;
-}
+/* ── CONNEXION ── */
+function openModal()  { document.getElementById('modal').classList.add('show'); document.getElementById('wh-input').value = webhookUrl; }
 function closeModal() { document.getElementById('modal').classList.remove('show'); }
  
 function saveWebhook() {
@@ -835,31 +376,27 @@ function saveWebhook() {
 }
  
 function syncConn(on) {
-  const dot   = document.getElementById('conn-dot');
-  const label = document.getElementById('conn-label');
-  const badge = document.getElementById('conn-status');
-  const mwh   = document.getElementById('m-wh');
-  const mwhs  = document.getElementById('m-wh-sub');
+  const dot = document.getElementById('conn-dot');
+  const lbl = document.getElementById('conn-label');
+  const bdg = document.getElementById('conn-status');
+  const mwh = document.getElementById('m-wh');
+  const mws = document.getElementById('m-wh-sub');
   if (on && webhookUrl) {
-    dot.classList.add('on');
-    badge.classList.add('connected');
+    dot.classList.add('on'); bdg.classList.add('connected');
     const host = webhookUrl.replace(/https?:\/\//,'').split('/')[0];
-    label.textContent = 'Connecté';
-    mwh.textContent   = host.length > 14 ? host.slice(0,14)+'…' : host;
-    mwh.style.color   = 'var(--green)'; mwh.style.fontSize = '12px';
-    mwhs.textContent  = 'Actif';
+    lbl.textContent = 'Connecté';
+    mwh.textContent = host.length > 14 ? host.slice(0,14)+'…' : host;
+    mwh.style.color = 'var(--green)'; mwh.style.fontSize = '12px';
+    mws.textContent = 'Actif';
   } else {
-    dot.classList.remove('on');
-    badge.classList.remove('connected');
-    label.textContent = 'Configurer webhook';
-    mwh.textContent   = '—'; mwh.style.color = 'var(--gray-400)'; mwh.style.fontSize = '14px';
-    mwhs.textContent  = 'Non configuré';
+    dot.classList.remove('on'); bdg.classList.remove('connected');
+    lbl.textContent = 'Configurer webhook';
+    mwh.textContent = '—'; mwh.style.color = 'var(--gray-400)'; mwh.style.fontSize = '14px';
+    mws.textContent = 'Non configuré';
   }
 }
  
-/* ══════════════════════════════════════════
-   CSV FILE INPUT
-══════════════════════════════════════════ */
+/* ── CSV FILE ── */
 function switchInput(mode, btn) {
   inputMode = mode;
   document.querySelectorAll('.itog-btn').forEach(b => b.classList.remove('active'));
@@ -867,115 +404,87 @@ function switchInput(mode, btn) {
   document.getElementById('csv-text-wrap').style.display = mode === 'text' ? '' : 'none';
   document.getElementById('csv-file-wrap').style.display = mode === 'file' ? '' : 'none';
 }
- 
-function dragOver(e) { e.preventDefault(); document.getElementById('file-drop').classList.add('drag'); }
+function dragOver(e)  { e.preventDefault(); document.getElementById('file-drop').classList.add('drag'); }
 function dragLeave()  { document.getElementById('file-drop').classList.remove('drag'); }
-function dropFile(e)  {
-  e.preventDefault(); dragLeave();
-  const f = e.dataTransfer.files[0];
-  if (f) handleFile(f);
-}
- 
+function dropFile(e)  { e.preventDefault(); dragLeave(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }
 function handleFile(file) {
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    csvFromFile = e.target.result;
-    document.getElementById('file-name').textContent = '✓ ' + file.name;
-    toast('ok', '✓ Fichier chargé : ' + file.name);
-  };
-  reader.readAsText(file);
+  const r = new FileReader();
+  r.onload = e => { csvFromFile = e.target.result; document.getElementById('file-name').textContent = '✓ ' + file.name; toast('ok','✓ Fichier chargé : '+file.name); };
+  r.readAsText(file);
 }
+function getCsvData() { return inputMode === 'file' ? csvFromFile : document.getElementById('csv-input').value.trim(); }
  
-function getCsvData() {
-  if (inputMode === 'file') return csvFromFile;
-  return document.getElementById('csv-input').value.trim();
-}
- 
-/* ══════════════════════════════════════════
-   PIPELINE ANIMATION
-══════════════════════════════════════════ */
+/* ── PIPELINE ── */
 function resetPipeline() {
-  STEPS.forEach((s,i) => {
-    document.getElementById(s).className = 'step pending';
-    document.getElementById('t'+(i+1)).textContent = '—';
-  });
+  STEPS.forEach((s,i) => { document.getElementById(s).className = 'step pending'; document.getElementById('t'+(i+1)).textContent = '—'; });
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('pipe-pct').textContent = '0 / 5';
 }
- 
 function startPipeline() {
   resetPipeline(); stepTimers.forEach(clearTimeout); stepTimers = [];
   const t0 = Date.now();
   STEPS.forEach((sid, i) => {
     const tid = setTimeout(() => {
-      if (i > 0) {
-        document.getElementById(STEPS[i-1]).className = 'step done';
-        document.getElementById('t'+i).textContent = ((Date.now()-t0)/1000).toFixed(1)+'s';
-      }
+      if (i > 0) { document.getElementById(STEPS[i-1]).className = 'step done'; document.getElementById('t'+i).textContent = ((Date.now()-t0)/1000).toFixed(1)+'s'; }
       document.getElementById(sid).className = 'step active';
       document.getElementById('loading-msg').textContent = MSGS[i];
       document.getElementById('loading-sub').textContent = `Étape ${i+1} / 5`;
-      const pct = Math.round((i+1)/5*88);
-      document.getElementById('progress-fill').style.width = pct+'%';
+      document.getElementById('progress-fill').style.width = Math.round((i+1)/5*88)+'%';
       document.getElementById('pipe-pct').textContent = (i+1)+' / 5';
     }, TIMINGS[i]);
     stepTimers.push(tid);
   });
 }
- 
 function finishPipeline() {
   stepTimers.forEach(clearTimeout);
-  STEPS.forEach((s,i) => {
-    document.getElementById(s).className = 'step done';
-    document.getElementById('t'+(i+1)).textContent = '✓';
-  });
+  STEPS.forEach((s,i) => { document.getElementById(s).className = 'step done'; document.getElementById('t'+(i+1)).textContent = '✓'; });
   document.getElementById('progress-fill').style.width = '100%';
   document.getElementById('pipe-pct').textContent = '5 / 5';
 }
  
-/* ══════════════════════════════════════════
-   PARSE RESPONSE — gère tous les formats
-══════════════════════════════════════════ */
-function extractOutput(data) {
-  // Format direct output string
-  if (typeof data.output === 'string') return data.output;
-  if (typeof data.text === 'string')   return data.text;
-  if (typeof data.message === 'string') return data.message;
-  if (typeof data.response === 'string') return data.response;
-  if (typeof data.result === 'string')  return data.result;
- 
-  // Format imbriqué (tableau)
-  if (Array.isArray(data) && data[0]) return extractOutput(data[0]);
- 
-  // Format JSON structuré (Agent 1 summary)
-  if (data.summary) {
-    const s = data.summary;
-    return [
-      `Test : ${s.test || '—'}`,
-      `N    : ${s.n || '—'}`,
-      `p    : ${s.p_value || '—'}`,
-      `Sig  : ${s.significant ? 'Oui (p < 0.05)' : 'Non'}`,
-      '',
-      s.interpretation || ''
-    ].join('\n');
+/* ── PARSE RESPONSE (robuste tous formats n8n) ── */
+function deepExtractText(data) {
+  if (!data) return null;
+  // Formats directs
+  if (typeof data.output === 'string' && data.output.trim()) return data.output.trim();
+  if (typeof data.text   === 'string' && data.text.trim())   return data.text.trim();
+  if (typeof data.message === 'string' && data.message.trim()) return data.message.trim();
+  if (typeof data.response === 'string' && data.response.trim()) return data.response.trim();
+  if (typeof data.result  === 'string' && data.result.trim())  return data.result.trim();
+  if (typeof data.content === 'string' && data.content.trim()) return data.content.trim();
+  // Tableau d'items (format n8n agent)
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      const t = deepExtractText(item); if (t) return t;
+    }
   }
- 
-  // Format document structuré
+  // Objet imbriqué .message.content (OpenAI)
+  if (data.message?.content) return deepExtractText(data.message);
+  // Format structuré document Agent1
   if (data.document) {
-    const doc = data.document;
-    const st  = doc.statistical_analysis || {};
+    const st = data.document.statistical_analysis || {};
+    const r  = st.results || {};
     return [
       `Test : ${st.test_chosen || '—'}`,
-      `N    : ${doc.data_description?.n_after_cleaning || '—'}`,
-      `p    : ${st.results?.p_value || '—'}`,
-      `Sig  : ${st.results?.significant ? 'Oui' : 'Non'}`,
+      `N    : ${data.document.data_description?.n_after_cleaning || '—'}`,
+      `p    : ${r.p_value || '—'}`,
+      `Sig  : ${r.significant ? 'Oui (p < 0.05)' : 'Non'}`,
       '',
       st.interpretation || ''
     ].join('\n');
   }
+  // Format summary Agent1
+  if (data.summary) {
+    const s = data.summary;
+    return [`Test : ${s.test||'—'}`,`N    : ${s.n||'—'}`,`p    : ${s.p_value||'—'}`,`Sig  : ${s.significant?'Oui (p < 0.05)':'Non'}`,``,s.interpretation||''].join('\n');
+  }
+  return null;
+}
  
-  // Fallback JSON
+function extractOutput(data) {
+  const t = deepExtractText(data);
+  if (t) return t;
   return JSON.stringify(data, null, 2);
 }
  
@@ -983,45 +492,33 @@ function extractLatex(raw) {
   // Délimiteurs explicites
   const m1 = raw.match(/---LATEX---([\s\S]*?)---END LATEX---/);
   if (m1) return m1[1].trim();
- 
   // Bloc \documentclass
   const m2 = raw.match(/(\\documentclass[\s\S]*?\\end\{document\})/);
   if (m2) return m2[1].trim();
- 
-  // Champ JSON latex_article
+  // JSON: latex_article ou files_to_create
   try {
     const parsed = typeof raw === 'object' ? raw : JSON.parse(raw);
     if (parsed.latex_article) return parsed.latex_article;
-    if (parsed.files_to_create) {
-      const tex = parsed.files_to_create.find(f => f.filename?.endsWith('.tex'));
-      if (tex) return tex.content;
+    if (parsed.files_to_create) { const tex = parsed.files_to_create.find(f => f.filename?.endsWith('.tex')); if (tex) return tex.content; }
+    // Cherche dans output (cas agent n8n qui wraps JSON)
+    if (typeof parsed.output === 'string') {
+      const inner = extractLatex(parsed.output);
+      if (inner) return inner;
     }
   } catch {}
- 
   return null;
 }
  
 function extractPvalue(raw) {
-  const patterns = [
-    /p[_\s-]?value[^0-9]*([\d.]+)/i,
-    /\bp\s*[=<>]\s*(0\.\d+)/i,
-    /"p_value"\s*:\s*([\d.]+)/,
-    /p~([\d.]+)/,
-  ];
-  for (const p of patterns) {
-    const m = raw.match(p);
-    if (m) return parseFloat(m[1]);
-  }
+  const patterns = [/p[_\s-]?value[^0-9]*([\d.]+)/i,/\bp\s*[=<>]\s*(0\.\d+)/i,/"p_value"\s*:\s*([\d.]+)/,/p~([\d.]+)/];
+  for (const p of patterns) { const m = raw.match(p); if (m) return parseFloat(m[1]); }
   return null;
 }
  
-/* ══════════════════════════════════════════
-   RUN ANALYSIS
-══════════════════════════════════════════ */
+/* ── RUN ANALYSIS ── */
 async function runAnalysis() {
   const question = document.getElementById('q-input').value.trim();
   const csvData  = getCsvData();
- 
   if (!question) { toast('err','⚠ Question manquante'); return; }
   if (!csvData)  { toast('err','⚠ Données CSV manquantes'); return; }
   if (!webhookUrl) { openModal(); return; }
@@ -1030,21 +527,14 @@ async function runAnalysis() {
   btn.disabled = true;
   document.getElementById('m-status').textContent = 'En cours';
   document.getElementById('m-status').style.color = 'var(--amber)';
- 
-  const ov = document.getElementById('loading-ov');
-  ov.classList.add('show');
+  document.getElementById('loading-ov').classList.add('show');
   startPipeline();
  
   try {
     const res = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:JSON.stringify({ 
-  query: { 
-    question: question, 
-    csv_data: csv 
-  } 
-})
+      body: JSON.stringify({ question, csv_data: csvData })
     });
  
     if (!res.ok) {
@@ -1052,98 +542,74 @@ async function runAnalysis() {
       throw new Error(`HTTP ${res.status}${errText ? ' — ' + errText.slice(0,200) : ''}`);
     }
  
-    const data = await res.json();
-    rawResult = JSON.stringify(data, null, 2);
+    // Lire la réponse : gérer JSON et texte
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); } catch { data = { output: raw }; }
+    rawResult = typeof raw === 'string' ? raw : JSON.stringify(data, null, 2);
  
     finishPipeline();
-    ov.classList.remove('show');
+    document.getElementById('loading-ov').classList.remove('show');
  
-    // Parse output
     const outputText = extractOutput(data);
     const latexCode  = extractLatex(rawResult) || extractLatex(data);
     const pVal       = extractPvalue(rawResult);
     const isSig      = pVal !== null ? pVal < 0.05 : null;
  
-    // Summary
     document.getElementById('r-summary').textContent = outputText;
+    document.getElementById('r-latex').textContent   = latexCode || 'Aucun bloc LaTeX détecté dans la réponse.';
+    document.getElementById('r-raw').textContent     = rawResult;
  
-    // LaTeX
-    document.getElementById('r-latex').textContent = latexCode || 'Aucun bloc LaTeX détecté dans la réponse.';
- 
-    // Raw
-    document.getElementById('r-raw').textContent = rawResult;
- 
-    // Status bar
-    const statusBar = document.getElementById('result-status-bar');
+    const bar = document.getElementById('result-status-bar');
     if (isSig === true) {
-      statusBar.innerHTML = `<div class="r-status sig">✓ Résultat significatif — p = ${pVal.toFixed(4)} &lt; 0.05</div>`;
+      bar.innerHTML = `<div class="r-status sig">✓ Résultat significatif — p = ${pVal.toFixed(4)} &lt; 0.05</div>`;
       document.getElementById('m-pval').textContent = pVal.toFixed(4);
       document.getElementById('m-pval').style.color = 'var(--green)';
     } else if (isSig === false) {
-      statusBar.innerHTML = `<div class="r-status ns">✗ Non significatif — p = ${pVal.toFixed(4)} ≥ 0.05</div>`;
+      bar.innerHTML = `<div class="r-status ns">✗ Non significatif — p = ${pVal.toFixed(4)} ≥ 0.05</div>`;
       document.getElementById('m-pval').textContent = pVal.toFixed(4);
       document.getElementById('m-pval').style.color = 'var(--red)';
     } else {
-      statusBar.innerHTML = `<div class="r-status na">ℹ Analyse effectuée — vérifier le résumé</div>`;
+      bar.innerHTML = `<div class="r-status na">ℹ Analyse effectuée — vérifier le résumé</div>`;
     }
  
     document.getElementById('result-section').classList.add('show');
     document.getElementById('m-status').textContent = 'Terminé';
     document.getElementById('m-status').style.color = 'var(--green)';
  
-    // Stats
     runCount++;
     localStorage.setItem('sl_runs', runCount);
- 
-    history.unshift({
-      q:    question.slice(0, 50),
-      time: new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }),
-      sig:  isSig
-    });
+    history.unshift({ q: question.slice(0,50), time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}), sig: isSig });
     if (history.length > 6) history.pop();
     localStorage.setItem('sl_history', JSON.stringify(history));
- 
-    syncStats();
-    renderHistory();
-    toast('ok', '✓ Analyse terminée');
+    syncStats(); renderHistory();
+    toast('ok','✓ Analyse terminée');
  
   } catch (err) {
     stepTimers.forEach(clearTimeout);
-    ov.classList.remove('show');
- 
-    let errMsg = err.message;
-    if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError')) {
-      errMsg = 'Impossible de joindre le webhook. Vérifiez que le workflow n8n est actif et que l\'URL /webhook/biostat (sans -test) est correcte.';
+    document.getElementById('loading-ov').classList.remove('show');
+    let msg = err.message;
+    if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+      msg = 'Impossible de joindre le webhook.\n\n→ Vérifiez que le workflow n8n est ACTIF\n→ Utilisez /webhook/biostat (pas /webhook-test/)\n→ Vérifiez que Railway est démarré';
     }
- 
-    document.getElementById('r-summary').textContent = '❌ Erreur de connexion\n\n' + errMsg;
+    document.getElementById('r-summary').textContent = '❌ Erreur de connexion\n\n' + msg;
     document.getElementById('result-section').classList.add('show');
     document.getElementById('m-status').textContent = 'Erreur';
     document.getElementById('m-status').style.color = 'var(--red)';
- 
     STEPS.forEach(s => { if (document.getElementById(s).classList.contains('active')) document.getElementById(s).className = 'step pending'; });
- 
-    toast('err', '❌ Connexion échouée');
+    toast('err','❌ Connexion échouée');
   }
- 
   btn.disabled = false;
 }
  
-/* ══════════════════════════════════════════
-   UI HELPERS
-══════════════════════════════════════════ */
+/* ── UI HELPERS ── */
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show'));
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('show');
 }
- 
-function copyLatex() {
-  const txt = document.getElementById('r-latex').textContent;
-  navigator.clipboard.writeText(txt).then(() => toast('ok', '📋 LaTeX copié'));
-}
- 
+function copyLatex() { navigator.clipboard.writeText(document.getElementById('r-latex').textContent).then(() => toast('ok','📋 LaTeX copié')); }
 function exportResult() {
   if (!rawResult) { toast('err','⚠ Aucun résultat'); return; }
   const latex = document.getElementById('r-latex').textContent;
@@ -1153,9 +619,8 @@ function exportResult() {
   a.download = 'statlab-' + Date.now() + '.tex';
   a.click();
 }
- 
 function resetAll() {
-  document.getElementById('q-input').value   = '';
+  document.getElementById('q-input').value = '';
   document.getElementById('csv-input').value = '';
   csvFromFile = '';
   document.getElementById('file-name').textContent = '';
@@ -1167,41 +632,30 @@ function resetAll() {
   rawResult = '';
   resetPipeline();
 }
- 
 function syncStats() {
   document.getElementById('m-runs').textContent = runCount;
   document.getElementById('hist-count').textContent = history.length + ' analyse' + (history.length !== 1 ? 's' : '');
 }
- 
 function renderHistory() {
   const el = document.getElementById('hist-body');
   if (!history.length) { el.innerHTML = '<div class="empty">Aucune analyse pour l\'instant</div>'; return; }
   el.innerHTML = history.map(h => `
     <div class="hist-item">
       <div class="hi-icon">📊</div>
-      <div class="hi-body">
-        <div class="hi-title">${esc(h.q)}…</div>
-        <div class="hi-meta">${h.time}</div>
-      </div>
-      ${h.sig !== null && h.sig !== undefined
-        ? `<div class="hi-tag ${h.sig ? 'sig' : 'ns'}">${h.sig ? 'p<0.05' : 'n.s.'}</div>`
-        : ''}
+      <div class="hi-body"><div class="hi-title">${esc(h.q)}…</div><div class="hi-meta">${h.time}</div></div>
+      ${h.sig !== null && h.sig !== undefined ? `<div class="hi-tag ${h.sig?'sig':'ns'}">${h.sig?'p<0.05':'n.s.'}</div>` : ''}
     </div>`).join('');
 }
- 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
- 
 function toast(type, msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + (type || '');
+  t.textContent = msg; t.className = 'toast show '+(type||'');
   setTimeout(() => t.classList.remove('show'), 3200);
 }
- 
 function navTo(page, el) {
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
-  if (page !== 'analyze') toast('', `🚧 Module "${page}" — bientôt disponible`);
+  if (page !== 'analyze') toast('','🚧 Module "'+page+'" — bientôt disponible');
 }
 </script>
 </body>
