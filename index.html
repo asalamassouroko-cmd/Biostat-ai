@@ -1039,7 +1039,12 @@ async function runAnalysis() {
     const res = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, csv_data: csvData })
+      body:JSON.stringify({ 
+  query: { 
+    question: question, 
+    csv_data: csv 
+  } 
+})
     });
  
     if (!res.ok) {
