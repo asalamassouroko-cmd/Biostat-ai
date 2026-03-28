@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StatLab · Biostatistical Analysis</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<!-- KaTeX for LaTeX preview -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  --bg:#0d0f14;--bg2:#141720;--bg3:#1a1e2a;--bg4:#212638;
+  --border:#2a2f42;--border2:#363c55;
+  --text:#e8eaf0;--text2:#9aa0b8;--text3:#5c6480;
+  --blue:#4f7cff;--blue-dim:#1a2550;--blue-glow:rgba(79,124,255,.2);
+  --green:#2dd98e;--green-dim:#0d2e20;
+  --red:#ff5f5f;--red-dim:#2e1212;
+  --amber:#f5a623;--amber-dim:#2e200d;
+  --purple:#a78bfa;--purple-dim:#1e1535;
+  --cyan:#22d3ee;
+  --mono:'JetBrains Mono',monospace;
+  --font:'Sora',sans-serif;
+  --radius:10px;--radius-sm:6px;
+  --shadow:0 2px 8px rgba(0,0,0,.4);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.5);
+  --glow:0 0 20px rgba(79,124,255,.15);
+}
+[data-theme="light"] {
+  --bg:#f4f5f8;--bg2:#ffffff;--bg3:#eef0f5;--bg4:#e5e8f0;
+  --border:#d8dce8;--border2:#bcc2d8;
+  --text:#1a1e2a;--text2:#4a5270;--text3:#8890aa;
+  --blue:#2563eb;--blue-dim:#eff6ff;--blue-glow:rgba(37,99,235,.1);
+  --green:#16a34a;--green-dim:#f0fdf4;
+  --red:#dc2626;--red-dim:#fef2f2;
+  --amber:#d97706;--amber-dim:#fffbeb;
+  --purple:#7c3aed;--purple-dim:#f5f3ff;
+  --cyan:#0891b2;
+  --shadow:0 1px 4px rgba(0,0,0,.1);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.12);
+  --glow:0 0 20px rgba(37,99,235,.08);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .3s,color .3s}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:224px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sl-brand{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sl-brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 2px 8px var(--blue-glow)}
+.sl-brand-name{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.4px}
+.sl-brand-version{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:1px}
+.sl-nav{padding:12px 8px;flex:1}
+.sl-nav-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:0 8px;margin:16px 0 6px}
+.sl-nav-label:first-child{margin-top:4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--text2);transition:all .15s;border:1px solid transparent;margin-bottom:2px;user-select:none;position:relative}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--blue-dim);color:var(--blue);border-color:rgba(79,124,255,.25);box-shadow:var(--glow)}
+.nav-item .ni-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.ni-badge{margin-left:auto;font-size:8px;font-weight:600;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;background:var(--bg3);padding:2px 5px;border-radius:3px;border:1px solid var(--border)}
+.sl-bottom{padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.conn-status{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);font-size:12px;color:var(--text2);transition:all .15s}
+.conn-status:hover{border-color:var(--border2)}
+.conn-status.connected{background:var(--green-dim);border-color:rgba(45,217,142,.25);color:var(--green)}
+.conn-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--text3)}
+.conn-dot.on{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── PING status ── */
+.ping-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-family:var(--mono);padding:4px 10px}
+.ping-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
+.ping-dot.ok{background:var(--green)}
+.ping-dot.fail{background:var(--red)}
+.ping-dot.checking{background:var(--amber);animation:blink 1s ease infinite}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:7px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);font-size:12px;color:var(--text2);transition:all .15s;font-family:var(--font)}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:8px;flex-shrink:0}
+.topbar-crumb{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text3)}
+.topbar-crumb .sep{color:var(--border2)}
+.topbar-crumb .cur{color:var(--text);font-weight:600}
+.topbar-actions{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tb-btn{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:11.5px;font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.tb-btn:hover{border-color:var(--border2);color:var(--text)}
+.tb-btn.primary{background:var(--blue);color:#fff;border-color:transparent;box-shadow:0 2px 8px var(--blue-glow)}
+.tb-btn.primary:hover{background:#3d6aff}
+
+/* ── PAGE ── */
+.page{padding:22px;overflow-y:auto;flex:1}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);transition:all .2s;position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(79,124,255,.04));pointer-events:none}
+.metric:hover{border-color:var(--border2);box-shadow:var(--shadow-lg)}
+.metric-label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);font-family:var(--mono);margin-bottom:8px}
+.metric-val{font-size:22px;font-weight:700;line-height:1;font-family:var(--mono);transition:color .3s}
+.metric-val.blue{color:var(--blue)}
+.metric-val.green{color:var(--green)}
+.metric-val.amber{color:var(--amber)}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:5px}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:border-color .2s}
+.card+.card{margin-top:12px}
+.card:hover{border-color:var(--border2)}
+.card-head{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-sub{font-size:11px;color:var(--text3);margin-left:auto;font-family:var(--mono)}
+.ch-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ch-dot.blue{background:var(--blue);box-shadow:0 0 6px var(--blue)}
+.ch-dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.ch-dot.amber{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.ch-dot.purple{background:var(--purple);box-shadow:0 0 6px var(--purple)}
+.card-body{padding:18px}
+
+/* ── FIELDS ── */
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:10.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.field-label .badge{font-size:9px;padding:1px 6px;border-radius:3px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(79,124,255,.3);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+
+/* ── INPUTS ── */
+textarea,input[type="text"],input[type="url"]{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:13px;padding:9px 11px;resize:vertical;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;line-height:1.55}
+textarea:focus,input:focus{border-color:var(--blue);background:var(--bg4);box-shadow:0 0 0 3px var(--blue-glow)}
+textarea::placeholder,input::placeholder{color:var(--text3)}
+#q-input{min-height:68px}
+#csv-input{min-height:120px;font-family:var(--mono);font-size:11.5px;line-height:1.7}
+
+/* ── FILE DROP ── */
+.file-drop{border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg3)}
+.file-drop:hover,.file-drop.drag{border-color:var(--blue);background:var(--blue-dim)}
+.file-drop input{display:none}
+.file-drop-icon{font-size:20px;margin-bottom:6px}
+.file-drop-text{font-size:12px;color:var(--text2)}
+.file-drop-text span{color:var(--blue);text-decoration:underline;cursor:pointer}
+.file-drop-name{font-size:11.5px;color:var(--green);font-family:var(--mono);margin-top:4px;font-weight:500}
+
+/* ── CSV PREVIEW ── */
+.csv-preview{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:8px;overflow:hidden;display:none}
+.csv-preview.show{display:block}
+.csv-preview-label{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:6px 10px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.csv-preview table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+.csv-preview th{padding:5px 10px;text-align:left;font-weight:600;color:var(--blue);border-bottom:1px solid var(--border);background:var(--bg4)}
+.csv-preview td{padding:4px 10px;color:var(--text2);border-bottom:1px solid rgba(255,255,255,.04)}
+.csv-preview tr:last-child td{border-bottom:none}
+.csv-detect{font-size:10px;color:var(--text3);padding:4px 10px 6px;font-family:var(--mono)}
+.csv-detect span{color:var(--amber)}
+
+/* ── EXAMPLES ── */
+.examples-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ex-btn{font-size:10.5px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--font);white-space:nowrap}
+.ex-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-dim)}
+
+/* ── TOGGLE ── */
+.input-toggle{display:flex;gap:4px;margin-bottom:10px;background:var(--bg3);border-radius:6px;padding:3px}
+.itog-btn{flex:1;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:600;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--text3);transition:all .15s;font-family:var(--font);text-transform:uppercase;letter-spacing:.8px}
+.itog-btn.active{background:var(--bg2);color:var(--text);box-shadow:var(--shadow)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .18s;white-space:nowrap;letter-spacing:-.2px}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#6b5fff);color:#fff;box-shadow:0 2px 12px var(--blue-glow)}
+.btn-primary:hover{box-shadow:0 4px 20px rgba(79,124,255,.4);transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg4);color:var(--text);border-color:var(--border2)}
+.btn-sm{padding:5px 11px;font-size:11.5px}
+.btn-full{width:100%;padding:11px;margin-top:12px}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,95,95,.25)}
+.btn-danger:hover{background:rgba(255,95,95,.15)}
+
+/* ── PROGRESS ── */
+.progress-bar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:10px 0 14px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px;width:0%;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* ── STEPS ── */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);transition:all .2s}
+.step:last-child{border-bottom:none;padding-bottom:0}
+.step-num{width:22px;height:22px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:var(--text3);font-family:var(--mono);flex-shrink:0;margin-top:1px;transition:all .3s}
+.step.done .step-num{background:var(--green-dim);border-color:rgba(45,217,142,.3);color:var(--green)}
+.step.active .step-num{background:var(--blue-dim);border-color:rgba(79,124,255,.4);color:var(--blue);animation:stepPulse 1.2s ease infinite}
+@keyframes stepPulse{0%,100%{box-shadow:0 0 0 0 var(--blue-glow)}50%{box-shadow:0 0 0 5px transparent}}
+.step-body{flex:1;min-width:0}
+.step-title{font-size:12px;font-weight:600;color:var(--text)}
+.step.pending .step-title{color:var(--text3)}
+.step-desc{font-size:11px;color:var(--text3);margin-top:1px}
+.step-time{font-size:10px;color:var(--text3);font-family:var(--mono);flex-shrink:0}
+.step.active .step-time{color:var(--blue)}
+.step.done .step-time{color:var(--green)}
+
+/* ── RESULTS ── */
+.result-section{display:none;margin-top:14px}
+.result-section.show{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;padding:3px;background:var(--bg3);border-radius:7px;margin-bottom:12px}
+.tab{flex:1;padding:6px 8px;border-radius:5px;font-size:11.5px;font-weight:600;text-align:center;cursor:pointer;color:var(--text3);border:none;background:none;transition:all .15s;font-family:var(--font)}
+.tab.active{background:var(--bg2);color:var(--text);box-shadow:var(--shadow)}
+.tab-pane{display:none}
+.tab-pane.show{display:block;animation:fadeIn .2s ease}
+
+/* ── RESULT BOXES ── */
+.result-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:13px;line-height:1.75;color:var(--text2);max-height:340px;overflow-y:auto;white-space:pre-wrap;font-family:var(--font)}
+.latex-box{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.latex-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);gap:8px}
+.latex-label{font-size:10px;font-weight:700;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px}
+.latex-head-actions{display:flex;gap:6px;margin-left:auto}
+.latex-body{padding:12px;font-family:var(--mono);font-size:11px;color:var(--text2);max-height:280px;overflow-y:auto;white-space:pre;line-height:1.7;background:var(--bg)}
+.latex-preview{padding:16px;max-height:320px;overflow-y:auto;line-height:1.8;color:var(--text);font-size:13px;background:var(--bg2)}
+.latex-preview h1,.latex-preview h2,.latex-preview h3{color:var(--text);margin:12px 0 6px;font-weight:700}
+.latex-preview h2{font-size:14px;color:var(--blue)}
+.latex-preview p{margin-bottom:8px;color:var(--text2)}
+.latex-preview-toggle{display:flex;gap:4px}
+.lpt-btn{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text3);font-family:var(--mono);transition:all .15s}
+.lpt-btn.active{background:var(--blue-dim);color:var(--blue);border-color:rgba(79,124,255,.3)}
+
+/* ── AUDIT LOG ── */
+.audit-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-size:11.5px;line-height:1.7;color:var(--text2);max-height:180px;overflow-y:auto}
+.audit-row{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.audit-row:last-child{border-bottom:none}
+.audit-icon{color:var(--blue);font-family:var(--mono);font-size:10px;flex-shrink:0;padding-top:1px}
+.audit-text{flex:1;color:var(--text2)}
+.audit-text strong{color:var(--amber)}
+
+/* ── CHART ── */
+.chart-wrap{position:relative;height:220px;margin-bottom:4px}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.cl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-family:var(--mono)}
+.cl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── HISTORY ── */
+.hist-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:3px}
+.hist-item:hover{background:var(--bg3);border-color:var(--border)}
+.hi-icon{width:30px;height:30px;border-radius:7px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px}
+.hi-body{flex:1;min-width:0}
+.hi-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.hi-meta{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.hi-tag{font-size:9.5px;font-family:var(--mono);font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0}
+.hi-tag.sig{background:var(--green-dim);color:var(--green);border:1px solid rgba(45,217,142,.3)}
+.hi-tag.ns{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,95,95,.25)}
+.empty{text-align:center;padding:24px 0;color:var(--text3);font-size:11.5px;font-family:var(--mono)}
+
+/* ── PUBMED LINKS ── */
+.pubmed-links{margin-top:10px}
+.pubmed-link{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);margin-bottom:6px;text-decoration:none;transition:all .15s}
+.pubmed-link:hover{border-color:var(--blue);background:var(--blue-dim)}
+.pl-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+.pl-body{flex:1;min-width:0}
+.pl-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-meta{font-size:10.5px;color:var(--blue);font-family:var(--mono);margin-top:1px}
+.pl-no-links{font-size:12px;color:var(--text3);font-family:var(--mono);padding:8px 0}
+
+/* ── STATUS BAR ── */
+.r-status{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;margin-bottom:12px;border:1px solid}
+.r-status.sig{background:var(--green-dim);color:var(--green);border-color:rgba(45,217,142,.3)}
+.r-status.ns{background:var(--red-dim);color:var(--red);border-color:rgba(255,95,95,.25)}
+.r-status.na{background:var(--bg3);color:var(--text3);border-color:var(--border)}
+
+/* ── MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-ov.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:460px;padding:26px;box-shadow:0 24px 80px rgba(0,0,0,.5);animation:modalIn .22s cubic-bezier(.4,0,.2,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.modal-sub{font-size:13px;color:var(--text3);margin-bottom:18px;line-height:1.6}
+.modal-note{background:var(--blue-dim);border:1px solid rgba(79,124,255,.25);border-radius:7px;padding:11px 13px;font-size:12px;color:var(--text2);line-height:1.7;margin-top:14px}
+.modal-note code{color:var(--blue);font-family:var(--mono)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+
+/* ── LOADING ── */
+.loading-ov{display:none;position:fixed;inset:0;background:rgba(13,15,20,.8);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:18px;backdrop-filter:blur(6px)}
+.loading-ov.show{display:flex}
+.spinner-wrap{position:relative;width:56px;height:56px}
+.spinner{position:absolute;inset:0;border-radius:50%;border:2px solid var(--border);border-top-color:var(--blue);animation:spin .8s linear infinite}
+.spinner2{position:absolute;inset:6px;border-radius:50%;border:2px solid transparent;border-top-color:var(--purple);animation:spin .5s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:14px;color:var(--text);font-weight:600}
+.loading-sub{font-size:12px;color:var(--text3);font-family:var(--mono)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;align-items:center;gap:8px;padding:11px 16px;background:var(--bg4);border:1px solid var(--border2);border-radius:9px;font-size:12.5px;color:var(--text);box-shadow:var(--shadow-lg);transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);pointer-events:none;max-width:320px;font-weight:500}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:var(--green-dim);border-color:rgba(45,217,142,.3);color:var(--green)}
+.toast.err{background:var(--red-dim);border-color:rgba(255,95,95,.25);color:var(--red)}
+.toast.info{background:var(--blue-dim);border-color:rgba(79,124,255,.25);color:var(--blue)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.sidebar{display:none}.page{padding:14px}.metrics{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="loading-ov" id="loading-ov">
+  <div class="spinner-wrap">
+    <div class="spinner"></div>
+    <div class="spinner2"></div>
+  </div>
+  <div class="loading-msg" id="loading-msg">Analyse en cours…</div>
+  <div class="loading-sub" id="loading-sub">Connexion au pipeline n8n</div>
+</div>
+
+<div class="modal-ov" id="modal">
+  <div class="modal">
+    <div class="modal-title">🔗 Configurer le webhook n8n</div>
+    <div class="modal-sub">Collez l'URL de votre webhook Railway pour activer l'analyse IA.</div>
+    <div class="field">
+      <div class="field-label">URL du webhook</div>
+      <input type="url" id="wh-input" placeholder="https://primary-production-xxxx.up.railway.app/webhook/biostat" />
+    </div>
+    <div class="modal-note">
+      ℹ Le workflow n8n doit être <strong>actif</strong> et accepter un POST avec les champs <code>question</code> et <code>csv_data</code>. Utilisez l'URL <code>/webhook/biostat</code> (pas <code>/webhook-test/</code>).
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary btn-sm" onclick="saveWebhook()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sl-brand">
+      <div class="sl-brand-icon">🔬</div>
+      <div>
+        <div class="sl-brand-name">StatLab</div>
+        <div class="sl-brand-version">v3.0 · IMRaD+</div>
+      </div>
+    </div>
+    <nav class="sl-nav">
+      <div class="sl-nav-label">Workspace</div>
+      <div class="nav-item active" onclick="navTo('analyze',this)"><span class="ni-icon">⚡</span> Analyse</div>
+      <div class="nav-item" onclick="navTo('history',this)"><span class="ni-icon">🕐</span> Historique<span class="ni-badge">soon</span></div>
+      <div class="nav-item" onclick="navTo('reports',this)"><span class="ni-icon">📄</span> Rapports<span class="ni-badge">soon</span></div>
+      <div class="sl-nav-label">Outils</div>
+      <div class="nav-item" onclick="navTo('pubmed',this)"><span class="ni-icon">🔎</span> PubMed<span class="ni-badge">soon</span></div>
+      <div class="nav-item" onclick="navTo('rcode',this)"><span class="ni-icon">📊</span> R Code<span class="ni-badge">soon</span></div>
+      <div class="nav-item" onclick="navTo('latex',this)"><span class="ni-icon">📝</span> LaTeX<span class="ni-badge">soon</span></div>
+    </nav>
+    <div class="sl-bottom">
+      <div class="conn-status" id="conn-status" onclick="openModal()">
+        <div class="conn-dot" id="conn-dot"></div>
+        <span id="conn-label">Configurer webhook</span>
+      </div>
+      <div class="ping-status" id="ping-status">
+        <div class="ping-dot" id="ping-dot"></div>
+        <span id="ping-label">Ping —</span>
+      </div>
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-label">Mode clair</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-crumb">
+        <span>StatLab</span><span class="sep">›</span><span class="cur">Analyse biostatistique</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="tb-btn" onclick="openModal()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          Webhook
+        </button>
+        <button class="tb-btn" onclick="resetAll()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Reset
+        </button>
+        <button class="tb-btn primary" id="dl-pdf-btn" onclick="downloadPDF()" style="display:none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Analyses</div><div class="metric-val blue" id="m-runs">0</div><div class="metric-sub">Cette session</div></div>
+        <div class="metric"><div class="metric-label">p-value</div><div class="metric-val" id="m-pval" style="color:var(--text3)">—</div><div class="metric-sub">Dernier test</div></div>
+        <div class="metric"><div class="metric-label">Statut</div><div class="metric-val green" id="m-status">Prêt</div><div class="metric-sub">Système OK</div></div>
+        <div class="metric"><div class="metric-label">Webhook</div><div class="metric-val" id="m-wh" style="color:var(--text3);font-size:14px">—</div><div class="metric-sub" id="m-wh-sub">Non configuré</div></div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <div class="card-head"><div class="ch-dot blue"></div><div class="card-title">Requête de recherche</div><div class="card-sub">Input · Dataset</div></div>
+            <div class="card-body">
+
+              <!-- EXAMPLES -->
+              <div class="field">
+                <div class="field-label">Exemples rapides</div>
+                <div class="examples-bar">
+                  <button class="ex-btn" onclick="loadExample('glycemie')">🩸 Glycémie</button>
+                  <button class="ex-btn" onclick="loadExample('tension')">💊 Tension artérielle</button>
+                  <button class="ex-btn" onclick="loadExample('correlation')">📐 Poids/Taille</button>
+                  <button class="ex-btn" onclick="loadExample('anova')">🧬 ANOVA 3 groupes</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field-label">Question de recherche</div>
+                <textarea id="q-input" placeholder="Ex : Y a-t-il une différence significative de glycémie entre le groupe contrôle et le groupe traitement ?"></textarea>
+              </div>
+
+              <div class="field">
+                <div class="field-label">Données <span class="badge">CSV / Fichier</span></div>
+                <div class="input-toggle">
+                  <button class="itog-btn active" onclick="switchInput('text',this)">Texte CSV</button>
+                  <button class="itog-btn" onclick="switchInput('file',this)">Fichier CSV</button>
+                </div>
+                <div id="csv-text-wrap">
+                  <textarea id="csv-input" placeholder="groupe,valeur&#10;control,5.2&#10;control,5.0&#10;traitement,4.1&#10;traitement,3.9" oninput="previewCsvText(this.value)"></textarea>
+                </div>
+                <div id="csv-file-wrap" style="display:none">
+                  <div class="file-drop" id="file-drop" onclick="document.getElementById('csv-file').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+                    <input type="file" id="csv-file" accept=".csv,.tsv,.txt" onchange="handleFile(this.files[0])">
+                    <div class="file-drop-icon">📂</div>
+                    <div class="file-drop-text">Glissez un fichier CSV ici ou <span>parcourez</span></div>
+                    <div class="file-drop-name" id="file-name"></div>
+                  </div>
+                </div>
+                <!-- CSV PREVIEW -->
+                <div class="csv-preview" id="csv-preview">
+                  <div class="csv-preview-label">Aperçu · 5 premières lignes</div>
+                  <table id="csv-table"></table>
+                  <div class="csv-detect" id="csv-detect"></div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-full" id="run-btn" onclick="runAnalysis()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Lancer l'analyse IA
+              </button>
+            </div>
+          </div>
+
+          <!-- RESULTS -->
+          <div class="result-section" id="result-section">
+            <div class="card">
+              <div class="card-head">
+                <div class="ch-dot green"></div><div class="card-title">Résultats</div>
+                <div style="margin-left:auto;display:flex;gap:6px">
+                  <button class="btn btn-ghost btn-sm" onclick="exportResult()">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    .tex
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div id="result-status-bar"></div>
+                <div class="tabs">
+                  <button class="tab active" onclick="switchTab('summary',this)">Résumé</button>
+                  <button class="tab" onclick="switchTab('chart',this)">Graphique</button>
+                  <button class="tab" onclick="switchTab('latex',this)">LaTeX</button>
+                  <button class="tab" onclick="switchTab('audit',this)">Audit</button>
+                  <button class="tab" onclick="switchTab('pubmed',this)">PubMed</button>
+                  <button class="tab" onclick="switchTab('raw',this)">Brut</button>
+                </div>
+                <div class="tab-pane show" id="tab-summary"><div class="result-box" id="r-summary"></div></div>
+                <div class="tab-pane" id="tab-chart">
+                  <div class="chart-wrap"><canvas id="result-chart"></canvas></div>
+                  <div class="chart-legend" id="chart-legend"></div>
+                </div>
+                <div class="tab-pane" id="tab-latex">
+                  <div class="latex-box">
+                    <div class="latex-head">
+                      <div class="latex-label">LaTeX · IMRaD</div>
+                      <div class="latex-preview-toggle">
+                        <button class="lpt-btn active" id="lpt-code" onclick="setLatexView('code')">Code</button>
+                        <button class="lpt-btn" id="lpt-preview" onclick="setLatexView('preview')">Aperçu</button>
+                      </div>
+                      <div class="latex-head-actions">
+                        <button class="btn btn-ghost btn-sm" onclick="copyLatex()">📋 Copier</button>
+                      </div>
+                    </div>
+                    <div class="latex-body" id="r-latex">Aucun bloc LaTeX détecté.</div>
+                    <div class="latex-preview" id="r-latex-preview" style="display:none"></div>
+                  </div>
+                </div>
+                <div class="tab-pane" id="tab-audit">
+                  <div class="field-label" style="margin-bottom:8px">Journal de décision IA</div>
+                  <div class="audit-box" id="r-audit"><span style="color:var(--text3);font-family:var(--mono);font-size:11px">Aucun audit disponible.</span></div>
+                </div>
+                <div class="tab-pane" id="tab-pubmed">
+                  <div class="field-label" style="margin-bottom:8px">Références PubMed détectées</div>
+                  <div id="r-pubmed"><div class="pl-no-links">Aucun lien PubMed détecté.</div></div>
+                </div>
+                <div class="tab-pane" id="tab-raw"><div class="result-box" id="r-raw"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div>
+          <div class="card">
+            <div class="card-head"><div class="ch-dot amber"></div><div class="card-title">Pipeline</div><div class="card-sub" id="pipe-pct">0 / 5</div></div>
+            <div class="card-body">
+              <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+              <div class="steps">
+                <div class="step pending" id="s1"><div class="step-num">01</div><div class="step-body"><div class="step-title">Parsing CSV</div><div class="step-desc">Validation &amp; normalité</div></div><div class="step-time" id="t1">—</div></div>
+                <div class="step pending" id="s2"><div class="step-num">02</div><div class="step-body"><div class="step-title">Sélection du test</div><div class="step-desc">t-test / ANOVA / Mann-Whitney</div></div><div class="step-time" id="t2">—</div></div>
+                <div class="step pending" id="s3"><div class="step-num">03</div><div class="step-body"><div class="step-title">Test statistique</div><div class="step-desc">p-value, IC95%, effect size</div></div><div class="step-time" id="t3">—</div></div>
+                <div class="step pending" id="s4"><div class="step-num">04</div><div class="step-body"><div class="step-title">Recherche littérature</div><div class="step-desc">PubMed · Nature · NEJM</div></div><div class="step-time" id="t4">—</div></div>
+                <div class="step pending" id="s5"><div class="step-num">05</div><div class="step-body"><div class="step-title">Rapport LaTeX</div><div class="step-desc">Format IMRaD complet</div></div><div class="step-time" id="t5">—</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-head"><div class="ch-dot blue"></div><div class="card-title">Historique</div><div class="card-sub" id="hist-count">0 analyses</div></div>
+            <div class="card-body" id="hist-body"><div class="empty">Aucune analyse pour l'instant</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── STATE ── */
+let webhookUrl  = localStorage.getItem('sl_wh') || '';
+let runCount    = parseInt(localStorage.getItem('sl_runs') || '0');
+let history     = JSON.parse(localStorage.getItem('sl_history') || '[]');
+let rawResult   = '';
+let stepTimers  = [];
+let inputMode   = 'text';
+let csvFromFile = '';
+let currentChart = null;
+let pingInterval = null;
+let isDark = localStorage.getItem('sl_theme') !== 'light';
+
+const STEPS   = ['s1','s2','s3','s4','s5'];
+const TIMINGS = [1400, 3500, 7000, 11000, 15500];
+const MSGS    = [
+  'Parsing CSV…','Sélection du test statistique…',
+  'Calcul p-value & effect size…','Recherche PubMed / Nature…',
+  'Génération rapport LaTeX IMRaD…'
+];
+
+/* ── EXAMPLES DATA ── */
+const EXAMPLES = {
+  glycemie: {
+    q: "Y a-t-il une différence significative de glycémie (mmol/L) entre le groupe contrôle et le groupe traitement ?",
+    csv: `groupe,glycemie\ncontrol,5.8\ncontrol,6.1\ncontrol,5.5\ncontrol,6.3\ncontrol,5.9\ncontrol,6.0\ncontrol,5.7\ncontrol,6.2\ntraitement,4.9\ntraitement,4.5\ntraitement,5.1\ntraitement,4.7\ntraitement,4.3\ntraitement,5.0\ntraitement,4.6\ntraitement,4.8`
+  },
+  tension: {
+    q: "La pression artérielle systolique est-elle significativement différente avant et après traitement antihypertenseur ?",
+    csv: `patient,avant,apres\n1,158,142\n2,165,148\n3,172,155\n4,160,138\n5,155,140\n6,168,145\n7,162,143\n8,170,150\n9,156,135\n10,163,147`
+  },
+  correlation: {
+    q: "Y a-t-il une corrélation significative entre le poids (kg) et la taille (cm) dans cette cohorte ?",
+    csv: `poids,taille\n68,172\n75,178\n62,165\n80,182\n70,175\n55,160\n85,185\n72,177\n65,168\n90,188\n58,163\n77,180`
+  },
+  anova: {
+    q: "Y a-t-il une différence significative de taux de cholestérol entre les trois groupes de régime alimentaire (standard, méditerranéen, végétarien) ?",
+    csv: `regime,cholesterol\nstandard,5.8\nstandard,6.2\nstandard,5.5\nstandard,6.0\nstandard,5.9\nmediterraneen,4.9\nmediterraneen,5.1\nmediterraneen,4.7\nmediterraneen,5.0\nmediterraneen,4.8\nvegetarien,4.2\nvegetarien,4.5\nvegetarien,4.1\nvegetarien,4.3\nvegetarien,4.6`
+  }
+};
+
+function loadExample(key) {
+  const ex = EXAMPLES[key];
+  if (!ex) return;
+  document.getElementById('q-input').value = ex.q;
+  document.getElementById('csv-input').value = ex.csv;
+  switchInput('text', document.querySelectorAll('.itog-btn')[0]);
+  previewCsvText(ex.csv);
+  toast('info', '✓ Exemple chargé — cliquez sur Lancer');
+}
+
+/* ── THEME ── */
+function toggleTheme() {
+  isDark = !isDark;
+  applyTheme();
+  localStorage.setItem('sl_theme', isDark ? 'dark' : 'light');
+}
+function applyTheme() {
+  if (isDark) {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('theme-icon').textContent = '🌙';
+    document.getElementById('theme-label').textContent = 'Mode clair';
+  } else {
+    document.documentElement.setAttribute('data-theme','light');
+    document.getElementById('theme-icon').textContent = '☀️';
+    document.getElementById('theme-label').textContent = 'Mode sombre';
+  }
+}
+
+/* ── CSV PREVIEW ── */
+function previewCsvText(raw) {
+  if (!raw || !raw.trim()) { document.getElementById('csv-preview').classList.remove('show'); return; }
+  renderCsvPreview(raw);
+}
+
+function renderCsvPreview(raw) {
+  const preview = document.getElementById('csv-preview');
+  const table = document.getElementById('csv-table');
+  const detect = document.getElementById('csv-detect');
+  // Detect separator
+  const commaCount = (raw.split('\n')[0] || '').split(',').length - 1;
+  const semicolCount = (raw.split('\n')[0] || '').split(';').length - 1;
+  const sep = semicolCount > commaCount ? ';' : ',';
+  const lines = raw.trim().split('\n').slice(0, 6);
+  if (lines.length < 2) { preview.classList.remove('show'); return; }
+  const headers = lines[0].split(sep).map(h => h.trim());
+  const rows = lines.slice(1);
+  let html = '<thead><tr>' + headers.map(h => `<th>${esc(h)}</th>`).join('') + '</tr></thead><tbody>';
+  rows.forEach(r => {
+    const cells = r.split(sep);
+    html += '<tr>' + cells.map(c => `<td>${esc(c.trim())}</td>`).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+  detect.innerHTML = `Séparateur détecté : <span>${sep === ',' ? 'virgule (,)' : 'point-virgule (;)'}</span> · ${headers.length} colonnes · ${rows.length} lignes prévisualisées`;
+  preview.classList.add('show');
+}
+
+/* ── INIT ── */
+window.addEventListener('load', () => {
+  applyTheme();
+  if (webhookUrl) syncConn(true);
+  syncStats();
+  renderHistory();
+  startPingCheck();
+});
+
+/* ── PING ── */
+function startPingCheck() {
+  pingCheck();
+  pingInterval = setInterval(pingCheck, 30000);
+}
+async function pingCheck() {
+  if (!webhookUrl) { setPingStatus('none'); return; }
+  setPingStatus('checking');
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 5000);
+    const res = await fetch(webhookUrl, { method:'OPTIONS', signal: ctrl.signal }).catch(() => null);
+    clearTimeout(tid);
+    setPingStatus(res ? 'ok' : 'fail');
+  } catch { setPingStatus('fail'); }
+}
+function setPingStatus(s) {
+  const dot = document.getElementById('ping-dot');
+  const lbl = document.getElementById('ping-label');
+  dot.className = 'ping-dot';
+  if (s === 'ok')       { dot.classList.add('ok');       lbl.textContent = 'Ping OK'; }
+  else if (s === 'fail'){ dot.classList.add('fail');     lbl.textContent = 'Ping fail'; }
+  else if (s === 'checking'){ dot.classList.add('checking'); lbl.textContent = 'Ping…'; }
+  else                  { lbl.textContent = 'Ping —'; }
+}
+
+/* ── WEBHOOK MODAL ── */
+function openModal()  { document.getElementById('modal').classList.add('show'); document.getElementById('wh-input').value = webhookUrl; }
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+function saveWebhook() {
+  const v = document.getElementById('wh-input').value.trim();
+  if (!v) { toast('err','⚠ URL manquante'); return; }
+  webhookUrl = v; localStorage.setItem('sl_wh', v);
+  syncConn(true); closeModal(); toast('ok','✓ Webhook enregistré');
+  pingCheck();
+}
+function syncConn(on) {
+  const dot = document.getElementById('conn-dot'), lbl = document.getElementById('conn-label');
+  const bdg = document.getElementById('conn-status'), mwh = document.getElementById('m-wh');
+  const mws = document.getElementById('m-wh-sub');
+  if (on && webhookUrl) {
+    dot.classList.add('on'); bdg.classList.add('connected');
+    const host = webhookUrl.replace(/https?:\/\//,'').split('/')[0];
+    lbl.textContent = 'Connecté';
+    mwh.textContent = host.length > 14 ? host.slice(0,14)+'…' : host;
+    mwh.style.color = 'var(--green)'; mwh.style.fontSize = '12px';
+    mws.textContent = 'Actif';
+  } else {
+    dot.classList.remove('on'); bdg.classList.remove('connected');
+    lbl.textContent = 'Configurer webhook';
+    mwh.textContent = '—'; mwh.style.color = 'var(--text3)'; mwh.style.fontSize = '14px';
+    mws.textContent = 'Non configuré';
+  }
+}
+
+/* ── CSV FILE ── */
+function switchInput(mode, btn) {
+  inputMode = mode;
+  document.querySelectorAll('.itog-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('csv-text-wrap').style.display = mode === 'text' ? '' : 'none';
+  document.getElementById('csv-file-wrap').style.display = mode === 'file' ? '' : 'none';
+  if (mode === 'text') previewCsvText(document.getElementById('csv-input').value);
+  else document.getElementById('csv-preview').classList.remove('show');
+}
+function dragOver(e)  { e.preventDefault(); document.getElementById('file-drop').classList.add('drag'); }
+function dragLeave()  { document.getElementById('file-drop').classList.remove('drag'); }
+function dropFile(e)  { e.preventDefault(); dragLeave(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }
+function handleFile(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    csvFromFile = e.target.result;
+    document.getElementById('file-name').textContent = '✓ ' + file.name;
+    toast('ok','✓ Fichier chargé : '+file.name);
+    renderCsvPreview(csvFromFile);
+  };
+  r.readAsText(file);
+}
+function getCsvData() { return inputMode === 'file' ? csvFromFile : document.getElementById('csv-input').value.trim(); }
+
+/* ── PIPELINE ── */
+function resetPipeline() {
+  STEPS.forEach((s,i) => { document.getElementById(s).className = 'step pending'; document.getElementById('t'+(i+1)).textContent = '—'; });
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('pipe-pct').textContent = '0 / 5';
+}
+function startPipeline() {
+  resetPipeline(); stepTimers.forEach(clearTimeout); stepTimers = [];
+  const t0 = Date.now();
+  STEPS.forEach((sid, i) => {
+    const tid = setTimeout(() => {
+      if (i > 0) { document.getElementById(STEPS[i-1]).className = 'step done'; document.getElementById('t'+i).textContent = ((Date.now()-t0)/1000).toFixed(1)+'s'; }
+      document.getElementById(sid).className = 'step active';
+      document.getElementById('loading-msg').textContent = MSGS[i];
+      document.getElementById('loading-sub').textContent = `Étape ${i+1} / 5`;
+      document.getElementById('progress-fill').style.width = Math.round((i+1)/5*88)+'%';
+      document.getElementById('pipe-pct').textContent = (i+1)+' / 5';
+    }, TIMINGS[i]);
+    stepTimers.push(tid);
+  });
+}
+function finishPipeline() {
+  stepTimers.forEach(clearTimeout);
+  STEPS.forEach((s,i) => { document.getElementById(s).className = 'step done'; document.getElementById('t'+(i+1)).textContent = '✓'; });
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('pipe-pct').textContent = '5 / 5';
+}
+
+/* ── PARSE RESPONSE ── */
+function deepExtractText(data) {
+  if (!data) return null;
+  if (typeof data.output === 'string' && data.output.trim()) return data.output.trim();
+  if (typeof data.text   === 'string' && data.text.trim())   return data.text.trim();
+  if (typeof data.message === 'string' && data.message.trim()) return data.message.trim();
+  if (typeof data.response === 'string' && data.response.trim()) return data.response.trim();
+  if (typeof data.result  === 'string' && data.result.trim())  return data.result.trim();
+  if (typeof data.content === 'string' && data.content.trim()) return data.content.trim();
+  if (Array.isArray(data)) { for (const item of data) { const t = deepExtractText(item); if (t) return t; } }
+  if (data.message?.content) return deepExtractText(data.message);
+  if (data.document) {
+    const st = data.document.statistical_analysis || {}, r = st.results || {};
+    return [`Test : ${st.test_chosen || '—'}`,`N    : ${data.document.data_description?.n_after_cleaning || '—'}`,`p    : ${r.p_value || '—'}`,`Sig  : ${r.significant ? 'Oui (p < 0.05)' : 'Non'}`,``,st.interpretation || ''].join('\n');
+  }
+  if (data.summary) {
+    const s = data.summary;
+    return [`Test : ${s.test||'—'}`,`N    : ${s.n||'—'}`,`p    : ${s.p_value||'—'}`,`Sig  : ${s.significant?'Oui (p < 0.05)':'Non'}`,``,s.interpretation||''].join('\n');
+  }
+  return null;
+}
+function extractOutput(data) { return deepExtractText(data) || JSON.stringify(data, null, 2); }
+function extractLatex(raw) {
+  const m1 = raw.match(/---LATEX---([\s\S]*?)---END LATEX---/); if (m1) return m1[1].trim();
+  const m2 = raw.match(/(\\documentclass[\s\S]*?\\end\{document\})/); if (m2) return m2[1].trim();
+  try {
+    const parsed = typeof raw === 'object' ? raw : JSON.parse(raw);
+    if (parsed.latex_article) return parsed.latex_article;
+    if (parsed.files_to_create) { const tex = parsed.files_to_create.find(f => f.filename?.endsWith('.tex')); if (tex) return tex.content; }
+    if (typeof parsed.output === 'string') { const inner = extractLatex(parsed.output); if (inner) return inner; }
+  } catch {}
+  return null;
+}
+function extractPvalue(raw) {
+  const patterns = [/p[_\s-]?value[^0-9]*([\d.]+)/i,/\bp\s*[=<>]\s*(0\.\d+)/i,/"p_value"\s*:\s*([\d.]+)/,/p~([\d.]+)/];
+  for (const p of patterns) { const m = raw.match(p); if (m) return parseFloat(m[1]); }
+  return null;
+}
+
+/* ── EXTRACT PUBMED LINKS ── */
+function extractPubmedLinks(text) {
+  const links = [];
+  const urlRe = /https?:\/\/(?:www\.)?pubmed\.ncbi\.nlm\.nih\.gov\/[\d]+\/?/gi;
+  const pmidRe = /PMID[:\s]+(\d{6,})/gi;
+  let m;
+  while ((m = urlRe.exec(text)) !== null) links.push({ url: m[0], type: 'url' });
+  while ((m = pmidRe.exec(text)) !== null) {
+    const url = `https://pubmed.ncbi.nlm.nih.gov/${m[1]}/`;
+    if (!links.find(l => l.url === url)) links.push({ url, pmid: m[1], type: 'pmid' });
+  }
+  return links;
+}
+
+/* ── GENERATE AUDIT LOG ── */
+function generateAuditLog(text, csv) {
+  const entries = [];
+  const lines = csv ? csv.split('\n').filter(l => l.trim()) : [];
+  const n = lines.length - 1;
+  entries.push({ icon: '📥', text: `Données reçues : <strong>${n} observations</strong> parsées.` });
+  if (text.toLowerCase().includes('mann-whitney') || text.toLowerCase().includes('wilcoxon')) {
+    entries.push({ icon: '🔍', text: `Distribution non-normale détectée → <strong>Test de Mann-Whitney</strong> sélectionné (non-paramétrique).` });
+  } else if (text.toLowerCase().includes('anova')) {
+    entries.push({ icon: '🔍', text: `3+ groupes détectés → <strong>ANOVA one-way</strong> sélectionnée.` });
+  } else if (text.toLowerCase().includes('t-test') || text.toLowerCase().includes('student')) {
+    entries.push({ icon: '🔍', text: `N ≥ 30 et distribution normale → <strong>Test t de Student</strong> sélectionné.` });
+  } else if (text.toLowerCase().includes('corrélation') || text.toLowerCase().includes('pearson') || text.toLowerCase().includes('spearman')) {
+    entries.push({ icon: '🔍', text: `Deux variables continues → <strong>Test de corrélation</strong> appliqué.` });
+  } else {
+    entries.push({ icon: '🔍', text: `Test statistique sélectionné automatiquement par l'IA selon les données.` });
+  }
+  const pval = extractPvalue(text);
+  if (pval !== null) {
+    const sig = pval < 0.05;
+    entries.push({ icon: '📊', text: `p-value calculée : <strong>${pval.toFixed(4)}</strong> → ${sig ? '<strong style="color:var(--green)">Significatif (p &lt; 0.05)</strong>' : '<strong style="color:var(--red)">Non significatif (p ≥ 0.05)</strong>'}.` });
+  }
+  if (text.includes('IC') || text.includes('95%') || text.includes('confidence')) {
+    entries.push({ icon: '📐', text: `Intervalle de confiance à 95% calculé et inclus dans le rapport.` });
+  }
+  entries.push({ icon: '📝', text: `Rapport IMRaD généré avec recherche littérature PubMed intégrée.` });
+  return entries;
+}
+
+/* ── RENDER CHART ── */
+function renderChart(csvData, outputText) {
+  const ctx = document.getElementById('result-chart').getContext('2d');
+  if (currentChart) { currentChart.destroy(); currentChart = null; }
+  document.getElementById('chart-legend').innerHTML = '';
+  if (!csvData) return;
+  const lines = csvData.trim().split('\n').filter(l => l.trim());
+  if (lines.length < 2) return;
+  const sep = (lines[0].split(';').length > lines[0].split(',').length) ? ';' : ',';
+  const headers = lines[0].split(sep).map(h => h.trim());
+  const rows = lines.slice(1).map(l => l.split(sep).map(c => c.trim()));
+  
+  // Find text col and numeric col
+  const numCol = headers.findIndex((h, i) => rows.some(r => !isNaN(parseFloat(r[i]))));
+  const catCol = headers.findIndex((h, i) => i !== numCol && rows.some(r => isNaN(parseFloat(r[i])) && r[i]));
+  
+  const isDarkMode = !document.documentElement.hasAttribute('data-theme');
+  const gridColor = isDarkMode ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+  const textColor = isDarkMode ? '#9aa0b8' : '#4a5270';
+  
+  const COLORS = ['#4f7cff','#2dd98e','#f5a623','#a78bfa','#22d3ee','#ff5f5f'];
+
+  if (catCol >= 0 && numCol >= 0) {
+    // Group by category → Box-style bar chart (mean + std)
+    const groups = {};
+    rows.forEach(r => {
+      const cat = r[catCol], val = parseFloat(r[numCol]);
+      if (!isNaN(val)) { if (!groups[cat]) groups[cat] = []; groups[cat].push(val); }
+    });
+    const labels = Object.keys(groups);
+    const means = labels.map(k => { const v = groups[k]; return v.reduce((a,b)=>a+b,0)/v.length; });
+    const stds  = labels.map((k,i) => { const v = groups[k], m = means[i]; return Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/v.length); });
+    const bgColors = labels.map((_,i) => COLORS[i % COLORS.length] + '88');
+    const bdColors = labels.map((_,i) => COLORS[i % COLORS.length]);
+    currentChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: headers[numCol],
+          data: means,
+          backgroundColor: bgColors,
+          borderColor: bdColors,
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` Moy: ${c.raw.toFixed(3)} ± ${stds[c.dataIndex].toFixed(3)}` } } },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: "'JetBrains Mono'" } } },
+          y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: "'JetBrains Mono'" } }, title: { display: true, text: headers[numCol], color: textColor } }
+        }
+      }
+    });
+    // Legend
+    const leg = document.getElementById('chart-legend');
+    leg.innerHTML = labels.map((l,i) => `<div class="cl-item"><div class="cl-dot" style="background:${COLORS[i%COLORS.length]}"></div>${esc(l)}: ${means[i].toFixed(3)} ± ${stds[i].toFixed(3)}</div>`).join('');
+  } else if (numCol >= 0 && headers.length >= 2) {
+    // Scatter / correlation
+    const col2 = headers.findIndex((h, i) => i !== numCol && rows.some(r => !isNaN(parseFloat(r[i]))));
+    if (col2 >= 0) {
+      const pts = rows.map(r => ({ x: parseFloat(r[numCol]), y: parseFloat(r[col2]) })).filter(p => !isNaN(p.x) && !isNaN(p.y));
+      currentChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets: [{ label: `${headers[numCol]} vs ${headers[col2]}`, data: pts, backgroundColor: COLORS[0] + 'aa', borderColor: COLORS[0], pointRadius: 5, pointHoverRadius: 7 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: headers[numCol], color: textColor } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor }, title: { display: true, text: headers[col2], color: textColor } }
+          }
+        }
+      });
+      document.getElementById('chart-legend').innerHTML = `<div class="cl-item"><div class="cl-dot" style="background:${COLORS[0]}"></div>${pts.length} observations · ${headers[numCol]} vs ${headers[col2]}</div>`;
+    }
+  }
+}
+
+/* ── LATEX PREVIEW ── */
+function setLatexView(mode) {
+  document.getElementById('lpt-code').className    = 'lpt-btn' + (mode==='code'?    ' active':'');
+  document.getElementById('lpt-preview').className = 'lpt-btn' + (mode==='preview'? ' active':'');
+  document.getElementById('r-latex').style.display         = mode==='code' ? '' : 'none';
+  document.getElementById('r-latex-preview').style.display = mode==='preview' ? '' : 'none';
+}
+
+function buildLatexPreview(latex) {
+  if (!latex) return '<span style="color:var(--text3);font-family:var(--mono);font-size:11px">Aucun LaTeX disponible.</span>';
+  let html = latex;
+  // Strip document preamble / end
+  html = html.replace(/\\documentclass[\s\S]*?\\begin\{document\}/, '').replace(/\\end\{document\}[\s\S]*/, '');
+  // Convert sections
+  html = html.replace(/\\section\*?\{([^}]+)\}/g, '<h2>$1</h2>');
+  html = html.replace(/\\subsection\*?\{([^}]+)\}/g, '<h3>$1</h3>');
+  html = html.replace(/\\title\{([^}]+)\}/g, '<h1>$1</h1>');
+  html = html.replace(/\\author\{([^}]+)\}/g, '<p><em>$1</em></p>');
+  html = html.replace(/\\abstract[\s\S]*?\\end\{abstract\}/, (m) => `<div style="border-left:3px solid var(--blue);padding-left:12px;margin:10px 0;font-style:italic">${m.replace(/\\begin\{abstract\}|\\end\{abstract\}/g,'')}</div>`);
+  html = html.replace(/\\textbf\{([^}]+)\}/g,'<strong>$1</strong>');
+  html = html.replace(/\\textit\{([^}]+)\}/g,'<em>$1</em>');
+  html = html.replace(/\\emph\{([^}]+)\}/g,'<em>$1</em>');
+  html = html.replace(/\\cite\{([^}]+)\}/g,'<sup style="color:var(--blue)">[$1]</sup>');
+  html = html.replace(/\\item\s/g,'• ');
+  html = html.replace(/\\begin\{(itemize|enumerate)\}/g,'').replace(/\\end\{(itemize|enumerate)\}/g,'');
+  html = html.replace(/\\[a-zA-Z]+\{([^}]*)\}/g,'$1');
+  html = html.replace(/\\[a-zA-Z]+/g,'');
+  html = html.replace(/\n{3,}/g,'\n\n').replace(/\n\n/g,'</p><p>');
+  return '<p>' + html + '</p>';
+}
+
+/* ── PDF DOWNLOAD ── */
+function downloadPDF() {
+  const latex = document.getElementById('r-latex').textContent;
+  if (!latex || latex === 'Aucun bloc LaTeX détecté.') { toast('err','⚠ Aucun LaTeX à exporter'); return; }
+  // Open Overleaf with the LaTeX code
+  const encoded = encodeURIComponent(latex);
+  const a = document.createElement('a');
+  a.href = 'data:application/x-latex;charset=utf-8,' + encoded;
+  a.download = 'statlab-rapport-' + Date.now() + '.tex';
+  a.click();
+  toast('ok','✓ Fichier .tex téléchargé — ouvrir dans Overleaf pour PDF');
+}
+
+/* ── RUN ANALYSIS ── */
+async function runAnalysis() {
+  const question = document.getElementById('q-input').value.trim();
+  const csvData  = getCsvData();
+  if (!question) { toast('err','⚠ Question manquante'); return; }
+  if (!csvData)  { toast('err','⚠ Données CSV manquantes'); return; }
+  if (!webhookUrl) { openModal(); return; }
+
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  document.getElementById('m-status').textContent = 'En cours';
+  document.getElementById('m-status').style.color = 'var(--amber)';
+  document.getElementById('loading-ov').classList.add('show');
+  startPipeline();
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, csv_data: csvData })
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status}${errText ? ' — ' + errText.slice(0,200) : ''}`);
+    }
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); } catch { data = { output: raw }; }
+    rawResult = typeof raw === 'string' ? raw : JSON.stringify(data, null, 2);
+
+    finishPipeline();
+    document.getElementById('loading-ov').classList.remove('show');
+
+    const outputText = extractOutput(data);
+    const latexCode  = extractLatex(rawResult) || extractLatex(data);
+    const pVal       = extractPvalue(rawResult);
+    const isSig      = pVal !== null ? pVal < 0.05 : null;
+
+    // Summary
+    document.getElementById('r-summary').textContent = outputText;
+    // LaTeX code & preview
+    const latexDisplay = latexCode || 'Aucun bloc LaTeX détecté dans la réponse.';
+    document.getElementById('r-latex').textContent = latexDisplay;
+    document.getElementById('r-latex-preview').innerHTML = buildLatexPreview(latexCode);
+    // Raw
+    document.getElementById('r-raw').textContent = rawResult;
+    // Chart
+    renderChart(csvData, outputText);
+    // Audit
+    const auditEntries = generateAuditLog(outputText + rawResult, csvData);
+    document.getElementById('r-audit').innerHTML = auditEntries.map(e =>
+      `<div class="audit-row"><div class="audit-icon">${e.icon}</div><div class="audit-text">${e.text}</div></div>`
+    ).join('');
+    // PubMed links
+    const links = extractPubmedLinks(rawResult);
+    if (links.length > 0) {
+      document.getElementById('r-pubmed').innerHTML = links.map(l =>
+        `<a class="pubmed-link" href="${esc(l.url)}" target="_blank" rel="noopener">
+          <div class="pl-icon">🔬</div>
+          <div class="pl-body">
+            <div class="pl-title">${l.pmid ? 'PMID ' + l.pmid : l.url.replace('https://pubmed.ncbi.nlm.nih.gov/','').replace(/\/$/,'')}</div>
+            <div class="pl-meta">${esc(l.url)}</div>
+          </div>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--text3)"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>`
+      ).join('');
+    } else {
+      document.getElementById('r-pubmed').innerHTML = '<div class="pl-no-links">Aucun lien PubMed détecté dans la réponse.<br><span style="font-size:10.5px;color:var(--text3)">Les PMIDs et URLs PubMed sont extraits automatiquement.</span></div>';
+    }
+
+    // Status bar
+    const bar = document.getElementById('result-status-bar');
+    if (isSig === true) {
+      bar.innerHTML = `<div class="r-status sig">✓ Résultat significatif — p = ${pVal.toFixed(4)} &lt; 0.05</div>`;
+      document.getElementById('m-pval').textContent = pVal.toFixed(4);
+      document.getElementById('m-pval').style.color = 'var(--green)';
+    } else if (isSig === false) {
+      bar.innerHTML = `<div class="r-status ns">✗ Non significatif — p = ${pVal.toFixed(4)} ≥ 0.05</div>`;
+      document.getElementById('m-pval').textContent = pVal.toFixed(4);
+      document.getElementById('m-pval').style.color = 'var(--red)';
+    } else {
+      bar.innerHTML = `<div class="r-status na">ℹ Analyse effectuée — vérifier le résumé</div>`;
+    }
+
+    document.getElementById('result-section').classList.add('show');
+    document.getElementById('m-status').textContent = 'Terminé';
+    document.getElementById('m-status').style.color = 'var(--green)';
+    document.getElementById('dl-pdf-btn').style.display = '';
+
+    runCount++;
+    localStorage.setItem('sl_runs', runCount);
+    history.unshift({ q: question.slice(0,50), time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}), sig: isSig });
+    if (history.length > 6) history.pop();
+    localStorage.setItem('sl_history', JSON.stringify(history));
+    syncStats(); renderHistory();
+    toast('ok','✓ Analyse terminée');
+
+  } catch (err) {
+    stepTimers.forEach(clearTimeout);
+    document.getElementById('loading-ov').classList.remove('show');
+    let msg = err.message;
+    if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+      msg = 'Impossible de joindre le webhook.\n\n→ Vérifiez que le workflow n8n est ACTIF\n→ Utilisez /webhook/biostat (pas /webhook-test/)\n→ Vérifiez que Railway est démarré';
+    }
+    document.getElementById('r-summary').textContent = '❌ Erreur de connexion\n\n' + msg;
+    document.getElementById('result-section').classList.add('show');
+    document.getElementById('m-status').textContent = 'Erreur';
+    document.getElementById('m-status').style.color = 'var(--red)';
+    STEPS.forEach(s => { if (document.getElementById(s).classList.contains('active')) document.getElementById(s).className = 'step pending'; });
+    toast('err','❌ Connexion échouée');
+    setPingStatus('fail');
+  }
+  btn.disabled = false;
+}
+
+/* ── UI HELPERS ── */
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('show');
+}
+function copyLatex() { navigator.clipboard.writeText(document.getElementById('r-latex').textContent).then(() => toast('ok','📋 LaTeX copié')); }
+function exportResult() {
+  if (!rawResult) { toast('err','⚠ Aucun résultat'); return; }
+  const latex = document.getElementById('r-latex').textContent;
+  const content = latex !== 'Aucun bloc LaTeX détecté dans la réponse.' ? latex : rawResult;
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(content);
+  a.download = 'statlab-' + Date.now() + '.tex'; a.click();
+}
+function resetAll() {
+  document.getElementById('q-input').value = '';
+  document.getElementById('csv-input').value = '';
+  csvFromFile = ''; rawResult = '';
+  document.getElementById('file-name').textContent = '';
+  document.getElementById('csv-preview').classList.remove('show');
+  document.getElementById('result-section').classList.remove('show');
+  document.getElementById('dl-pdf-btn').style.display = 'none';
+  document.getElementById('m-status').textContent = 'Prêt';
+  document.getElementById('m-status').style.color = 'var(--green)';
+  document.getElementById('m-pval').textContent = '—';
+  document.getElementById('m-pval').style.color = 'var(--text3)';
+  if (currentChart) { currentChart.destroy(); currentChart = null; }
+  resetPipeline();
+}
+function syncStats() {
+  document.getElementById('m-runs').textContent = runCount;
+  document.getElementById('hist-count').textContent = history.length + ' analyse' + (history.length !== 1 ? 's' : '');
+}
+function renderHistory() {
+  const el = document.getElementById('hist-body');
+  if (!history.length) { el.innerHTML = '<div class="empty">Aucune analyse pour l\'instant</div>'; return; }
+  el.innerHTML = history.map(h => `
+    <div class="hist-item">
+      <div class="hi-icon">📊</div>
+      <div class="hi-body"><div class="hi-title">${esc(h.q)}…</div><div class="hi-meta">${h.time}</div></div>
+      ${h.sig !== null && h.sig !== undefined ? `<div class="hi-tag ${h.sig?'sig':'ns'}">${h.sig?'p<0.05':'n.s.'}</div>` : ''}
+    </div>`).join('');
+}
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(type, msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show '+(type||'');
+  setTimeout(() => t.classList.remove('show'), 3400);
+}
+function navTo(page, el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  if (page !== 'analyze') toast('info','🚧 Module "'+page+'" — bientôt disponible');
+}
+</script>
+</body>
+</html>
